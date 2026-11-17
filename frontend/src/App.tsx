@@ -71,7 +71,7 @@ function MainLayout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative text-slate-900 selection:bg-sky-500 selection:text-white">
+    <div className="min-h-screen flex flex-col relative isolate text-slate-900 selection:bg-sky-500 selection:text-white">
       {/* Fixed Still Background - Pastel Network Glow Background */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         <img
@@ -79,8 +79,8 @@ function MainLayout() {
           alt="Pastel Network Glow Background"
           className="w-full h-full object-cover object-center select-none"
         />
-        {/* Subtle translucent veil for high readability while letting pastel glow refract through glassmorphism blocks */}
-        <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-[0.5px]" />
+        {/* Balanced subtle veil for high readability while letting pastel glow refract through glassmorphism blocks */}
+        <div className="absolute inset-0 bg-slate-900/5 backdrop-blur-[0.2px]" />
       </div>
 
       <Navbar
@@ -126,17 +126,10 @@ function MainLayout() {
         onStockUpdated={fetchAppData}
       />
 
-<<<<<<< Updated upstream
-      <footer className="glass-header border-t border-b-0 py-4 text-xs text-slate-500 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span className="font-medium text-slate-600">Hemas Hospital Thalawathugoda &bull; Smart Housekeeping Supply Management</span>
-          <span className="text-slate-400 font-mono text-[11px]">System v1.0 &bull; Internal Use Only</span>
-=======
       <footer className="glass-header border-t border-b-0 py-4 text-xs text-slate-600 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span className="font-medium text-slate-700">Hemas Hospital Thalawathugoda &bull; Smart Housekeeping Supply Management</span>
-          <span className="text-slate-500 font-mono text-[11px]">Internal Use Only</span>
->>>>>>> Stashed changes
+          <span className="text-slate-500 font-mono text-[11px]">System v1.0 &bull; Internal Use Only</span>
         </div>
       </footer>
     </div>
