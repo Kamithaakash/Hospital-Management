@@ -52,10 +52,15 @@ function MainLayout() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <div className="w-8 h-8 border-3 border-sky-700 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-slate-600">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden">
+        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-200/40 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-100/40 rounded-full blur-3xl" />
+        </div>
+        <div className="glass-card p-8 rounded-3xl text-center shadow-xl">
+          <div className="w-10 h-10 border-3 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto mb-3.5" />
+          <p className="text-sm font-semibold text-slate-700">Loading SHSMS Portal...</p>
+          <p className="text-xs text-slate-400 mt-1">Hemas Hospital Thalawathugoda</p>
         </div>
       </div>
     );
@@ -66,7 +71,24 @@ function MainLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen flex flex-col relative bg-slate-50/80 text-slate-900 selection:bg-sky-500 selection:text-white">
+      {/* Dynamic Ambient Background Glow Mesh for Glassmorphism Depth */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        {/* Soft radial blue gradient at top-left */}
+        <div className="absolute -top-32 -left-32 w-[32rem] h-[32rem] bg-sky-200/35 rounded-full blur-3xl" />
+        {/* Soft radial teal gradient at top-right */}
+        <div className="absolute top-12 -right-24 w-[28rem] h-[28rem] bg-teal-100/35 rounded-full blur-3xl" />
+        {/* Soft radial sky gradient near center */}
+        <div className="absolute top-1/2 left-1/4 w-[36rem] h-[36rem] bg-blue-100/25 rounded-full blur-3xl" />
+        {/* Soft bottom accent */}
+        <div className="absolute -bottom-24 right-1/4 w-[30rem] h-[30rem] bg-cyan-100/30 rounded-full blur-3xl" />
+        {/* Subtle hospital tech dot grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.025]" 
+          style={{ backgroundImage: 'radial-gradient(#0284c7 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }} 
+        />
+      </div>
+
       <Navbar
         currentTab={currentTab}
         onTabChange={(tab: any) => setCurrentTab(tab)}
@@ -110,10 +132,10 @@ function MainLayout() {
         onStockUpdated={fetchAppData}
       />
 
-      <footer className="bg-white border-t border-slate-200 py-4 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Hemas Hospital Thalawathugoda • Housekeeping Supply Management</span>
-          <span className="text-slate-400">Internal Use Only</span>
+      <footer className="glass-header border-t border-b-0 py-4 text-xs text-slate-500 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span className="font-medium text-slate-600">Hemas Hospital Thalawathugoda &bull; Smart Housekeeping Supply Management</span>
+          <span className="text-slate-400 font-mono text-[11px]">System v1.0 &bull; Internal Use Only</span>
         </div>
       </footer>
     </div>

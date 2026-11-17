@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Plus,
   X,
+  Package,
 } from 'lucide-react';
 import { api } from '../services/api.js';
 
@@ -91,18 +92,19 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
       {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-            Item Catalog & Batches
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Package className="w-5 h-5 text-sky-700" />
+            <span>Item Catalog & Batches</span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Current inventory levels, batch expiry dates, and storage locations.
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
+            Current inventory levels, FEFO batch expiry dates, and storage locations.
           </p>
         </div>
 
         {hasRole(['STORES_STAFF', 'ADMIN']) && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 rounded-lg bg-sky-700 hover:bg-sky-800 text-white font-medium text-xs shadow-xs flex items-center gap-1.5 transition-colors self-start sm:self-auto"
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-600/20 flex items-center gap-1.5 transition-all self-start sm:self-auto active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Item</span>
@@ -110,17 +112,20 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
         )}
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row gap-3 items-center justify-between">
+      {/* Glassmorphic Filter and Search Bar */}
+      <div className="glass-card p-4 rounded-3xl relative overflow-hidden flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+
         <div className="flex flex-wrap gap-1.5 w-full md:w-auto">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${selectedCategory === cat
+              className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all ${
+                selectedCategory === cat
                   ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
+                  : 'glass-pill text-slate-700 hover:bg-white'
+              }`}
             >
               {cat === 'ALL' ? 'All Items' : cat}
             </button>
@@ -134,17 +139,19 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
             placeholder="Search SKU, name, rack..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+            className="glass-input w-full pl-9 pr-3 py-1.5 text-xs rounded-xl focus:outline-hidden"
           />
         </div>
       </div>
 
-      {/* Items List Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+      {/* Glassmorphic Items List Table */}
+      <div className="glass-card rounded-3xl overflow-hidden relative">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+              <tr className="bg-slate-100/50 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-slate-600 border-b border-white/60">
                 <th className="py-3 px-4 w-10"></th>
                 <th className="py-3 px-4">Item SKU & Name</th>
                 <th className="py-3 px-4">Category</th>
@@ -152,17 +159,18 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                 <th className="py-3 px-4 text-right">Available Stock</th>
                 <th className="py-3 px-4 text-center">Reorder Level</th>
                 <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-center">QR Code</th>
+                <th className="py-3 px-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
+            <tbody className="divide-y divide-white/40 text-sm">
               {filteredItems.map((item) => {
                 const isExpanded = expandedItemId === item.id;
                 return (
                   <React.Fragment key={item.id}>
                     <tr
-                      className={`hover:bg-slate-50/80 transition-colors cursor-pointer ${isExpanded ? 'bg-sky-50/30' : ''
-                        }`}
+                      className={`hover:bg-white/50 transition-colors cursor-pointer ${
+                        isExpanded ? 'bg-sky-500/10' : ''
+                      }`}
                       onClick={() => setExpandedItemId(isExpanded ? null : item.id)}
                     >
                       <td className="py-3 px-4 text-slate-400 text-center">
@@ -173,37 +181,38 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                         )}
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-semibold text-slate-900">{item.name}</div>
-                        <div className="text-xs font-mono text-slate-400 flex items-center gap-2">
+                        <div className="font-bold text-slate-900">{item.name}</div>
+                        <div className="text-xs font-mono text-slate-500 flex items-center gap-2 mt-0.5">
                           <span>{item.sku}</span>
                           {item.tracksExpiry && (
-                            <span className="text-[10px] text-teal-800 bg-teal-50 px-1.5 py-0.2 rounded font-sans font-medium">
+                            <span className="text-[10px] text-teal-800 bg-teal-500/15 border border-teal-400/30 px-1.5 py-0.5 rounded-full font-sans font-semibold">
                               Expiry Tracked
                             </span>
                           )}
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">
+                        <span className="text-xs px-2.5 py-1 rounded-xl glass-pill text-slate-700 font-semibold">
                           {item.category}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-xs text-slate-600">{item.storageLocation}</td>
-                      <td className="py-3 px-4 text-right font-bold text-slate-900">
+                      <td className="py-3 px-4 text-xs font-medium text-slate-600">{item.storageLocation}</td>
+                      <td className="py-3 px-4 text-right font-extrabold text-slate-900">
                         {item.totalStock}{' '}
                         <span className="text-xs font-normal text-slate-500">{item.unit}</span>
                       </td>
-                      <td className="py-3 px-4 text-center text-xs text-slate-500">
+                      <td className="py-3 px-4 text-center text-xs font-medium text-slate-500">
                         {item.reorderPoint} {item.unit}
                       </td>
                       <td className="py-3 px-4 text-center">
                         <span
-                          className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${item.stockStatus === 'IN_STOCK'
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
+                            item.stockStatus === 'IN_STOCK'
+                              ? 'bg-emerald-500/15 text-emerald-800 border border-emerald-400/30'
                               : item.stockStatus === 'LOW_STOCK'
-                                ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                                : 'bg-rose-50 text-rose-700 border border-rose-200'
-                            }`}
+                              ? 'bg-amber-500/15 text-amber-800 border border-amber-400/30'
+                              : 'bg-rose-500/15 text-rose-800 border border-rose-400/30'
+                          }`}
                         >
                           {item.stockStatus?.replace('_', ' ')}
                         </span>
@@ -219,7 +228,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                                 setRecNotes('');
                                 setReceiveTarget(item);
                               }}
-                              className="px-2 py-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors"
+                              className="px-2.5 py-1 text-[11px] font-semibold text-emerald-800 glass-pill hover:bg-emerald-500/20 border-emerald-400/30 rounded-xl transition-all"
                               title="Receive New Batch"
                             >
                               + Receive
@@ -227,10 +236,10 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                           )}
                           <button
                             onClick={() => setActiveQRItem(item)}
-                            className="p-1.5 rounded-lg border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 transition-colors"
+                            className="p-1.5 rounded-xl glass-pill hover:bg-white text-slate-600 hover:text-slate-900 transition-all"
                             title="View & Print QR Code"
                           >
-                            <QrCode className="w-4 h-4" />
+                            <QrCode className="w-4 h-4 text-sky-700" />
                           </button>
                         </div>
                       </td>
@@ -238,15 +247,15 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
 
                     {/* Batch Details Drawer */}
                     {isExpanded && (
-                      <tr className="bg-slate-50/70 border-b border-slate-200">
+                      <tr className="bg-sky-50/20 border-b border-white/60">
                         <td colSpan={8} className="p-4 pl-12">
-                          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+                          <div className="glass-card p-4 rounded-2xl relative overflow-hidden">
                             <div className="flex items-center justify-between mb-3">
-                              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                              <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
                                 Batches ({item.batches?.length || 0})
                               </span>
-                              <span className="text-xs text-slate-400">
-                                Sorted by earliest expiry date
+                              <span className="text-xs text-slate-400 font-medium">
+                                Sorted by FEFO (earliest expiry date first)
                               </span>
                             </div>
 
@@ -264,40 +273,42 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                                   return (
                                     <div
                                       key={batch.id}
-                                      className={`p-3 rounded-lg border text-xs relative ${isExpired
-                                          ? 'bg-rose-50/50 border-rose-200 text-rose-900'
+                                      className={`p-3.5 rounded-2xl border text-xs relative backdrop-blur-md transition-all ${
+                                        isExpired
+                                          ? 'bg-rose-500/10 border-rose-300/40 text-rose-950'
                                           : isFirstCandidate
-                                            ? 'bg-emerald-50/40 border-emerald-300 ring-2 ring-emerald-500/20'
-                                            : 'bg-slate-50 border-slate-200'
-                                        }`}
+                                          ? 'bg-emerald-500/10 border-emerald-400/50 ring-2 ring-emerald-500/20'
+                                          : 'glass-pill text-slate-800'
+                                      }`}
                                     >
                                       {isFirstCandidate && (
-                                        <span className="absolute -top-2.5 right-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs">
+                                        <span className="absolute -top-2.5 right-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
                                           Earliest Expiry (FEFO)
                                         </span>
                                       )}
                                       <div className="font-bold text-slate-900 flex items-center justify-between">
                                         <span>Batch: {batch.batchNumber}</span>
                                         <span
-                                          className={`font-semibold ${isExpired
+                                          className={`font-extrabold ${
+                                            isExpired
                                               ? 'text-rose-700'
                                               : 'text-slate-900'
-                                            }`}
+                                          }`}
                                         >
                                           {batch.remainingQty} / {batch.initialQty} {item.unit}
                                         </span>
                                       </div>
 
-                                      <div className="mt-1.5 space-y-0.5 text-slate-600">
+                                      <div className="mt-2 space-y-0.5 text-slate-600 font-medium">
                                         <div>
                                           Expiry:{' '}
                                           <strong
                                             className={
                                               isExpired
-                                                ? 'text-rose-600'
+                                                ? 'text-rose-600 font-bold'
                                                 : batch.status === 'EXPIRING_SOON'
-                                                  ? 'text-amber-600'
-                                                  : 'text-slate-800'
+                                                ? 'text-amber-600 font-bold'
+                                                : 'text-slate-800 font-semibold'
                                             }
                                           >
                                             {batch.expiryDate
@@ -311,14 +322,15 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                                         </div>
                                       </div>
 
-                                      <div className="mt-2 pt-2 border-t border-slate-200/60 flex items-center justify-between">
+                                      <div className="mt-2.5 pt-2 border-t border-white/60 flex items-center justify-between">
                                         <span
-                                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isExpired
-                                              ? 'bg-rose-200 text-rose-800'
+                                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                            isExpired
+                                              ? 'bg-rose-500/20 text-rose-800'
                                               : batch.status === 'EXPIRING_SOON'
-                                                ? 'bg-amber-200 text-amber-800'
-                                                : 'bg-emerald-100 text-emerald-800'
-                                            }`}
+                                              ? 'bg-amber-500/20 text-amber-800'
+                                              : 'bg-emerald-500/20 text-emerald-800'
+                                          }`}
                                         >
                                           {batch.status}
                                         </span>
@@ -337,7 +349,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                                                 alert(err.message || 'Failed to dispose batch.');
                                               }
                                             }}
-                                            className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-700 hover:bg-rose-800 text-white"
+                                            className="text-[10px] font-bold px-2.5 py-1 rounded-xl bg-rose-700 hover:bg-rose-800 text-white shadow-xs"
                                           >
                                             Dispose (Wastage)
                                           </button>
@@ -360,15 +372,15 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
         </div>
       </div>
 
-      {/* QR Code Label Modal */}
+      {/* Glassmorphic Receive Stock Modal */}
       {receiveTarget && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-modal rounded-3xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
+            <div className="flex items-center justify-between border-b border-white/60 pb-3">
               <h3 className="text-base font-bold text-slate-900">
                 Receive Stock — {receiveTarget.name}
               </h3>
-              <button onClick={() => setReceiveTarget(null)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setReceiveTarget(null)} className="text-slate-400 hover:text-slate-700">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -391,11 +403,11 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                   setIsSubmitting(false);
                 }
               }}
-              className="space-y-3"
+              className="space-y-3.5"
             >
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Quantity ({receiveTarget.unit}) *
                   </label>
                   <input
@@ -404,23 +416,23 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                     required
                     value={recQty}
                     onChange={(e) => setRecQty(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                    className="glass-input w-full px-3 py-2 text-sm rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Batch Number
                   </label>
                   <input
                     value={recBatchNo}
                     onChange={(e) => setRecBatchNo(e.target.value)}
                     placeholder="Auto if blank"
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                    className="glass-input w-full px-3 py-2 text-sm rounded-xl font-mono"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
                   Expiry Date {receiveTarget.tracksExpiry ? '*' : '(Optional)'}
                 </label>
                 <input
@@ -428,30 +440,30 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                   required={receiveTarget.tracksExpiry}
                   value={recExpiry}
                   onChange={(e) => setRecExpiry(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                  className="glass-input w-full px-3 py-2 text-sm rounded-xl"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Notes</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Notes</label>
                 <input
                   value={recNotes}
                   onChange={(e) => setRecNotes(e.target.value)}
                   placeholder="Optional receipt notes"
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                  className="glass-input w-full px-3 py-2 text-sm rounded-xl"
                 />
               </div>
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-2 border-t border-white/60">
                 <button
                   type="button"
                   onClick={() => setReceiveTarget(null)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 glass-pill hover:bg-white rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 text-xs font-semibold bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-md"
                 >
                   {isSubmitting ? 'Saving...' : 'Confirm Receipt'}
                 </button>
@@ -461,20 +473,20 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
         </div>
       )}
 
-      {/* QR Code Label Modal */}
+      {/* Glassmorphic QR Code Label Modal */}
       {activeQRItem && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-modal rounded-3xl max-w-sm w-full p-6 shadow-2xl relative">
             <button
               onClick={() => setActiveQRItem(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div id="printable-label" className="text-center p-4 bg-white rounded-xl border border-slate-300">
+            <div id="printable-label" className="text-center p-5 bg-white/95 rounded-2xl border border-slate-300 shadow-sm">
               <div className="text-[11px] font-bold tracking-widest uppercase text-slate-800 border-b border-slate-200 pb-1 mb-3">
-                HEMAS HOSPITAL • THALAWATHUGODA
+                HEMAS HOSPITAL &bull; THALAWATHUGODA
               </div>
               <h3 className="font-bold text-slate-900 text-base leading-tight mb-1">
                 {activeQRItem.name}
@@ -483,7 +495,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                 {activeQRItem.sku}
               </div>
 
-              <div className="flex justify-center my-3 p-3 bg-white border border-slate-200 rounded-lg">
+              <div className="flex justify-center my-3 p-3 bg-white border border-slate-200 rounded-xl shadow-xs">
                 <QRCodeSVG value={activeQRItem.qrCodeValue} size={150} level="H" />
               </div>
 
@@ -492,7 +504,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                   Location: <strong>{activeQRItem.storageLocation}</strong>
                 </div>
                 <div>
-                  Category: <strong>{activeQRItem.category}</strong> • Unit: <strong>{activeQRItem.unit}</strong>
+                  Category: <strong>{activeQRItem.category}</strong> &bull; Unit: <strong>{activeQRItem.unit}</strong>
                 </div>
                 <div className="text-[10px] text-slate-400 font-mono mt-1">
                   {activeQRItem.qrCodeValue}
@@ -503,14 +515,14 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
             <div className="mt-5 flex gap-2">
               <button
                 onClick={handlePrintLabel}
-                className="flex-1 py-2 px-3 rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-md shadow-blue-600/20 active:scale-[0.98] transition-all"
               >
                 <Printer className="w-4 h-4" />
                 <span>Print Label</span>
               </button>
               <button
                 onClick={() => setActiveQRItem(null)}
-                className="py-2 px-3 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium"
+                className="py-2.5 px-3 rounded-xl glass-pill text-slate-600 hover:bg-white text-xs font-semibold"
               >
                 Close
               </button>
@@ -519,24 +531,24 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
         </div>
       )}
 
-      {/* Add New Item Modal */}
+      {/* Glassmorphic Add New Item Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-modal rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowAddModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700"
             >
               <X className="w-5 h-5" />
             </button>
 
             <h3 className="text-lg font-bold text-slate-900 mb-1">Add Housekeeping Item</h3>
-            <p className="text-xs text-slate-500 mb-4">
+            <p className="text-xs text-slate-500 font-medium mb-4">
               Enter item details to register in hospital inventory and generate its QR code.
             </p>
 
             {formError && (
-              <div className="p-3 mb-4 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+              <div className="p-3 mb-4 rounded-xl bg-rose-500/15 border border-rose-400/30 text-rose-900 text-xs font-semibold">
                 {formError}
               </div>
             )}
@@ -544,7 +556,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
             <form onSubmit={handleCreateItem} className="space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Item Code / SKU *
                   </label>
                   <input
@@ -553,17 +565,17 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                     placeholder="e.g. HEM-CHM-005"
                     value={newSku}
                     onChange={(e) => setNewSku(e.target.value)}
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg font-mono"
+                    className="glass-input w-full text-xs p-2.5 rounded-xl font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Category *
                   </label>
                   <select
                     value={newCat}
                     onChange={(e) => setNewCat(e.target.value as ItemCategory)}
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg"
+                    className="glass-input w-full text-xs p-2.5 rounded-xl"
                   >
                     <option value="CHEMICAL">CHEMICAL</option>
                     <option value="EQUIPMENT">EQUIPMENT</option>
@@ -574,7 +586,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
                   Item Name *
                 </label>
                 <input
@@ -583,13 +595,13 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                   placeholder="e.g. Surface Disinfectant Tablets"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full text-xs p-2 border border-slate-300 rounded-lg"
+                  className="glass-input w-full text-xs p-2.5 rounded-xl"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Unit of Measure *
                   </label>
                   <input
@@ -598,11 +610,11 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                     placeholder="Bottles, Liters, Boxes..."
                     value={newUnit}
                     onChange={(e) => setNewUnit(e.target.value)}
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg"
+                    className="glass-input w-full text-xs p-2.5 rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Storage Location *
                   </label>
                   <input
@@ -611,14 +623,14 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                     placeholder="Rack / Room location"
                     value={newLocation}
                     onChange={(e) => setNewLocation(e.target.value)}
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg"
+                    className="glass-input w-full text-xs p-2.5 rounded-xl"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Minimum Stock Level
                   </label>
                   <input
@@ -626,11 +638,11 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                     min="0"
                     value={newMinStock}
                     onChange={(e) => setNewMinStock(Number(e.target.value))}
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg"
+                    className="glass-input w-full text-xs p-2.5 rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Reorder Threshold
                   </label>
                   <input
@@ -638,7 +650,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                     min="0"
                     value={newROP}
                     onChange={(e) => setNewROP(Number(e.target.value))}
-                    className="w-full text-xs p-2 border border-slate-300 rounded-lg"
+                    className="glass-input w-full text-xs p-2.5 rounded-xl"
                   />
                 </div>
               </div>
@@ -651,23 +663,23 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                   onChange={(e) => setNewTracksExpiry(e.target.checked)}
                   className="rounded text-sky-600 focus:ring-sky-500"
                 />
-                <label htmlFor="tracksExpiry" className="text-xs text-slate-700">
+                <label htmlFor="tracksExpiry" className="text-xs text-slate-700 font-medium">
                   Track batch-level expiry date (Required for chemicals and medical consumables)
                 </label>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-slate-100 flex justify-end gap-2">
+              <div className="mt-5 pt-3 border-t border-white/60 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 rounded-lg"
+                  className="px-3 py-2 text-xs font-semibold text-slate-600 glass-pill hover:bg-white rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 bg-sky-700 hover:bg-sky-800 text-white rounded-lg text-xs font-medium shadow-xs disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-blue-600/20 disabled:opacity-50"
                 >
                   {isSubmitting ? 'Saving...' : 'Save Item'}
                 </button>
