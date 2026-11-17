@@ -5,12 +5,12 @@ echo Thalawathugoda Branch - Rapid Sprint Platform
 echo ====================================================================
 echo.
 echo Starting Backend API on http://localhost:5000 ...
-start "SHSMS Backend" cmd /k "cd /d E:\shsms-hemas-hospital\backend && npm run dev"
+start "SHSMS Backend" cmd /k "cd /d %~dp0backend && npm run dev"
 
 timeout /t 3 /nobreak >nul
 
 echo Starting Frontend UI on http://localhost:5173 ...
-start "SHSMS Frontend" cmd /k "cd /d E:\shsms-hemas-hospital\frontend && npm run dev"
+start "SHSMS Frontend" cmd /k "cd /d %~dp0frontend && npm run dev"
 
 echo.
 echo System started successfully!
