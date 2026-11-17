@@ -33,35 +33,35 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({ alerts, onAlertResolve
         return (
           <div
             key={alert.id}
-            className={`flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl border text-xs backdrop-blur-xl transition-all shadow-xs ${
+            className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-3 sm:py-2.5 sm:px-4 rounded-2xl border text-xs backdrop-blur-xl transition-all shadow-xs ${
               isCritical
-                ? 'bg-rose-500/10 border-rose-300/40 text-rose-950 shadow-rose-500/5'
+                ? 'bg-rose-500/15 border-rose-400/40 text-rose-950 shadow-rose-500/5'
                 : isWarning
-                ? 'bg-amber-500/10 border-amber-300/40 text-amber-950 shadow-amber-500/5'
-                : 'bg-sky-500/10 border-sky-300/40 text-sky-950 shadow-sky-500/5'
+                ? 'bg-amber-500/15 border-amber-400/40 text-amber-950 shadow-amber-500/5'
+                : 'bg-sky-500/15 border-sky-400/40 text-sky-950 shadow-sky-500/5'
             }`}
           >
-            <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
               {isCritical ? (
-                <div className="w-6 h-6 rounded-lg bg-rose-500/15 flex items-center justify-center shrink-0">
-                  <AlertCircle className="w-4 h-4 text-rose-600" />
+                <div className="w-6 h-6 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-400/30">
+                  <AlertCircle className="w-4 h-4 text-rose-700" />
                 </div>
               ) : isWarning ? (
-                <div className="w-6 h-6 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
-                  <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <div className="w-6 h-6 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-400/30">
+                  <AlertTriangle className="w-4 h-4 text-amber-700" />
                 </div>
               ) : (
-                <div className="w-6 h-6 rounded-lg bg-sky-500/15 flex items-center justify-center shrink-0">
-                  <Info className="w-4 h-4 text-sky-600" />
+                <div className="w-6 h-6 rounded-lg bg-sky-500/20 flex items-center justify-center shrink-0 border border-sky-400/30">
+                  <Info className="w-4 h-4 text-sky-700" />
                 </div>
               )}
-              <span className="font-bold uppercase tracking-wider text-[10px] px-2 py-0.5 rounded-lg glass-pill text-slate-800 shrink-0">
+              <span className="font-extrabold uppercase tracking-wider text-[10px] px-2 py-0.5 rounded-lg glass-pill text-slate-900 shrink-0">
                 {alert.alertType.replace('_', ' ')}
               </span>
-              <span className="font-semibold text-slate-800 truncate">{alert.message}</span>
+              <span className="font-semibold text-slate-900 truncate text-xs">{alert.message}</span>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0 pt-1 sm:pt-0">
               {alerts.length > 1 && alert.id === alerts[0].id && (
                 <button
                   onClick={() => setExpanded(!expanded)}

@@ -113,18 +113,18 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
       </div>
 
       {/* Glassmorphic Filter and Search Bar */}
-      <div className="glass-card p-4 rounded-3xl relative overflow-hidden flex flex-col md:flex-row gap-3 items-center justify-between">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+      <div className="glass-card p-3 sm:p-4 rounded-2xl sm:rounded-3xl relative overflow-hidden flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
-        <div className="flex flex-wrap gap-1.5 w-full md:w-auto">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0 w-full md:w-auto">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all ${
+              className={`px-3 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all active:scale-95 ${
                 selectedCategory === cat
                   ? 'bg-slate-900 text-white shadow-xs'
-                  : 'glass-pill text-slate-700 hover:bg-white'
+                  : 'glass-pill text-slate-800 hover:bg-white/90'
               }`}
             >
               {cat === 'ALL' ? 'All Items' : cat}
@@ -139,17 +139,17 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
             placeholder="Search SKU, name, rack..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="glass-input w-full pl-9 pr-3 py-1.5 text-xs rounded-xl focus:outline-hidden"
+            className="glass-input w-full pl-9 pr-3 py-1.5 text-xs rounded-xl focus:outline-hidden font-medium"
           />
         </div>
       </div>
 
       {/* Glassmorphic Items List Table */}
-      <div className="glass-card rounded-3xl overflow-hidden relative">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+      <div className="glass-card rounded-2xl sm:rounded-3xl overflow-hidden relative">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto no-scrollbar">
+          <table className="min-w-[700px] w-full text-left border-collapse">
             <thead>
               <tr className="bg-white/20 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-slate-700 border-b border-white/40">
                 <th className="py-3 px-4 w-10"></th>

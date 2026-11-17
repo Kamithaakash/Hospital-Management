@@ -60,49 +60,49 @@ export const Dashboard: React.FC<DashboardProps> = ({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Glassmorphic Header & Quick Actions */}
-      <div className="glass-card p-6 rounded-3xl relative overflow-hidden flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+      <div className="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl relative overflow-hidden flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-5">
         {/* Top specular highlight line */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
               {user?.fullName}
             </h1>
             <RoleBadge role={user?.role || 'ADMIN'} size="sm" />
           </div>
-          <p className="text-xs text-slate-500 font-medium mt-1">
-            Hemas Hospital Thalawathugoda &bull; Smart Housekeeping Supply Management System
+          <p className="text-xs text-slate-600 font-semibold mt-1">
+            Hemas Hospital Thalawathugoda &bull; Smart Housekeeping Supply Management
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full lg:w-auto">
           <button
             onClick={onOpenQRScanner}
-            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-1.5 shadow-md shadow-slate-900/15 active:scale-[0.98] transition-all"
+            className="px-3 sm:px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-slate-900/15 active:scale-[0.98] transition-all"
           >
             <QrCode className="w-3.5 h-3.5 text-sky-400" />
             <span>Scan QR</span>
           </button>
           <button
             onClick={() => onNavigateTab('requests')}
-            className="px-3.5 py-2 rounded-xl glass-pill hover:bg-sky-500/15 text-sky-900 border-sky-400/30 font-semibold text-xs flex items-center gap-1.5 shadow-2xs active:scale-[0.98] transition-all"
+            className="px-3 sm:px-3.5 py-2 rounded-xl glass-pill hover:bg-sky-500/20 text-sky-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs active:scale-[0.98] transition-all"
           >
             <FileText className="w-3.5 h-3.5 text-sky-700" />
             <span>Requests ({pendingRequests.length + approvedRequests.length})</span>
           </button>
           <button
             onClick={() => onNavigateTab('procurement')}
-            className="px-3.5 py-2 rounded-xl glass-pill hover:bg-amber-500/15 text-amber-900 border-amber-400/30 font-semibold text-xs flex items-center gap-1.5 shadow-2xs active:scale-[0.98] transition-all"
+            className="px-3 sm:px-3.5 py-2 rounded-xl glass-pill hover:bg-amber-500/20 text-amber-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs active:scale-[0.98] transition-all"
           >
             <Truck className="w-3.5 h-3.5 text-amber-700" />
-            <span>Purchase Orders ({openPOs.length})</span>
+            <span>POs ({openPOs.length})</span>
           </button>
           <button
             onClick={() => onNavigateTab('reports')}
-            className="px-3.5 py-2 rounded-xl glass-pill hover:bg-emerald-500/15 text-emerald-900 border-emerald-400/30 font-semibold text-xs flex items-center gap-1.5 shadow-2xs active:scale-[0.98] transition-all"
+            className="px-3 sm:px-3.5 py-2 rounded-xl glass-pill hover:bg-emerald-500/20 text-emerald-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs active:scale-[0.98] transition-all"
           >
             <BarChart3 className="w-3.5 h-3.5 text-emerald-700" />
             <span>Reports</span>
@@ -110,84 +110,84 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* 4 Clickable Glass KPI Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 4 Clickable Glass KPI Summary Cards - 2x2 on Mobile, 4-col on Desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <button
           onClick={() => onNavigateTab('items')}
-          className="text-left glass-card glass-card-interactive p-5 rounded-3xl relative overflow-hidden group"
+          className="text-left glass-card glass-card-interactive p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl relative overflow-hidden group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-sky-400/10 rounded-full blur-2xl group-hover:bg-sky-400/20 transition-all pointer-events-none" />
-          <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-sky-400/15 rounded-full blur-2xl group-hover:bg-sky-400/25 transition-all pointer-events-none" />
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
             <span>Catalog Items</span>
-            <div className="w-8 h-8 rounded-xl bg-sky-500/10 flex items-center justify-center">
-              <Package className="w-4 h-4 text-sky-700" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-sky-500/15 flex items-center justify-center border border-sky-400/30">
+              <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-800" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 mt-3">{totalItems}</div>
-          <div className="text-[11px] text-slate-400 font-medium mt-1">Browse active inventory & batches</div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 sm:mt-3">{totalItems}</div>
+          <div className="text-[10px] sm:text-[11px] text-slate-500 font-semibold mt-0.5 truncate">Active inventory items</div>
         </button>
 
         <button
           onClick={() => onNavigateTab('items')}
-          className="text-left glass-card glass-card-interactive p-5 rounded-3xl relative overflow-hidden group"
+          className="text-left glass-card glass-card-interactive p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl relative overflow-hidden group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-400/10 rounded-full blur-2xl group-hover:bg-amber-400/20 transition-all pointer-events-none" />
-          <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-            <span>Low / Out of Stock</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
-              <TrendingDown className="w-4 h-4 text-amber-600" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-400/15 rounded-full blur-2xl group-hover:bg-amber-400/25 transition-all pointer-events-none" />
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>Low Stock</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/15 flex items-center justify-center border border-amber-400/30">
+              <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-amber-600 mt-3">{lowStockItems.length}</div>
-          <div className="text-[11px] text-slate-400 font-medium mt-1">
-            {outOfStockItems.length > 0 ? `${outOfStockItems.length} out of stock` : 'At or below reorder threshold'}
+          <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-2 sm:mt-3">{lowStockItems.length}</div>
+          <div className="text-[10px] sm:text-[11px] text-slate-500 font-semibold mt-0.5 truncate">
+            {outOfStockItems.length > 0 ? `${outOfStockItems.length} out of stock` : 'At or below reorder'}
           </div>
         </button>
 
         <button
           onClick={() => onNavigateTab('items')}
-          className="text-left glass-card glass-card-interactive p-5 rounded-3xl relative overflow-hidden group"
+          className="text-left glass-card glass-card-interactive p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl relative overflow-hidden group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-rose-400/10 rounded-full blur-2xl group-hover:bg-rose-400/20 transition-all pointer-events-none" />
-          <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-rose-400/15 rounded-full blur-2xl group-hover:bg-rose-400/25 transition-all pointer-events-none" />
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
             <span>Expiry Watch</span>
-            <div className="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center">
-              <Clock className="w-4 h-4 text-rose-600" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-rose-500/15 flex items-center justify-center border border-rose-400/30">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-700" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-rose-600 mt-3">
+          <div className="text-2xl sm:text-3xl font-extrabold text-rose-600 mt-2 sm:mt-3">
             {expiringSoonCount + expiredCount}
           </div>
-          <div className="text-[11px] text-slate-400 font-medium mt-1">
-            {expiredCount} expired &bull; {expiringSoonCount} expiring soon
+          <div className="text-[10px] sm:text-[11px] text-slate-500 font-semibold mt-0.5 truncate">
+            {expiredCount} expired &bull; {expiringSoonCount} soon
           </div>
         </button>
 
         <button
           onClick={() => onNavigateTab('requests')}
-          className="text-left glass-card glass-card-interactive p-5 rounded-3xl relative overflow-hidden group"
+          className="text-left glass-card glass-card-interactive p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl relative overflow-hidden group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-400/10 rounded-full blur-2xl group-hover:bg-blue-400/20 transition-all pointer-events-none" />
-          <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-            <span>Active Workflows</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center">
-              <FileText className="w-4 h-4 text-blue-700" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-400/15 rounded-full blur-2xl group-hover:bg-blue-400/25 transition-all pointer-events-none" />
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>Workflows</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-500/15 flex items-center justify-center border border-blue-400/30">
+              <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-800" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-sky-700 mt-3">
+          <div className="text-2xl sm:text-3xl font-extrabold text-sky-800 mt-2 sm:mt-3">
             {pendingRequests.length + approvedRequests.length + openPOs.length}
           </div>
-          <div className="text-[11px] text-slate-400 font-medium mt-1">
-            {pendingRequests.length} pending &bull; {approvedRequests.length} to issue &bull; {openPOs.length} purchase orders
+          <div className="text-[10px] sm:text-[11px] text-slate-500 font-semibold mt-0.5 truncate">
+            {pendingRequests.length} pending &bull; {openPOs.length} POs
           </div>
         </button>
       </div>
 
       {/* Clean 2-Column Operational View with Glass Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Left Column: Active Tasks for Current Role */}
-        <div className="glass-card rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden flex flex-col justify-between">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
           <div>
             <div className="flex items-center justify-between pb-3.5 border-b border-white/30">
@@ -297,8 +297,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Right Column: Critical Stock & Expiry Watchlist */}
-        <div className="glass-card rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden flex flex-col justify-between">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
           <div>
             <div className="flex items-center justify-between pb-3.5 border-b border-white/30">

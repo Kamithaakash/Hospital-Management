@@ -86,18 +86,18 @@ export const ReportsPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
             onClick={exportCSV}
             disabled={rows.length === 0}
-            className="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-emerald-700/20 active:scale-[0.98] transition-all"
+            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-700/20 active:scale-[0.98] transition-all"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export CSV</span>
           </button>
           <button
             onClick={() => window.print()}
-            className="px-3.5 py-2 rounded-xl glass-pill hover:bg-white text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all"
+            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl glass-pill hover:bg-white/90 text-slate-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-[0.98]"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Print / PDF</span>
@@ -106,17 +106,17 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Glassmorphic Report Tabs */}
-      <div className="flex flex-wrap gap-1.5 glass-card p-2.5 rounded-2xl relative overflow-hidden print:hidden">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+      <div className="flex items-center gap-1.5 glass-card p-2 sm:p-2.5 rounded-2xl relative overflow-hidden overflow-x-auto no-scrollbar print:hidden">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
         {reportTabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setActiveReport(t.id)}
-            className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all ${
+            className={`px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold rounded-xl whitespace-nowrap transition-all active:scale-95 ${
               activeReport === t.id
                 ? 'bg-slate-900 text-white shadow-xs'
-                : 'glass-pill text-slate-700 hover:bg-white'
+                : 'glass-pill text-slate-800 hover:bg-white/90'
             }`}
           >
             {t.label}
@@ -125,15 +125,15 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Glassmorphic Filters */}
-      <div className="glass-card p-5 rounded-3xl relative overflow-hidden flex flex-wrap items-end gap-4 print:hidden">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+      <div className="glass-card p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl relative overflow-hidden flex flex-wrap items-end gap-3 sm:gap-4 print:hidden">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
-        <div>
-          <label className="block text-[11px] font-bold text-slate-700 mb-1">Category</label>
+        <div className="w-full sm:w-auto">
+          <label className="block text-[11px] font-bold text-slate-800 mb-1">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="glass-input px-3 py-2 text-xs rounded-xl"
+            className="glass-input w-full sm:w-auto px-3 py-2 text-xs rounded-xl font-medium"
           >
             <option value="ALL">All Categories</option>
             <option value="CHEMICAL">Cleaning Chemicals</option>
@@ -142,27 +142,27 @@ export const ReportsPage: React.FC = () => {
             <option value="PPE">PPE</option>
           </select>
         </div>
-        <div>
-          <label className="block text-[11px] font-bold text-slate-700 mb-1">Start Date</label>
+        <div className="flex-1 sm:flex-initial">
+          <label className="block text-[11px] font-bold text-slate-800 mb-1">Start Date</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="glass-input px-3 py-2 text-xs rounded-xl"
+            className="glass-input w-full px-3 py-2 text-xs rounded-xl font-medium"
           />
         </div>
-        <div>
-          <label className="block text-[11px] font-bold text-slate-700 mb-1">End Date</label>
+        <div className="flex-1 sm:flex-initial">
+          <label className="block text-[11px] font-bold text-slate-800 mb-1">End Date</label>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="glass-input px-3 py-2 text-xs rounded-xl"
+            className="glass-input w-full px-3 py-2 text-xs rounded-xl font-medium"
           />
         </div>
         <button
           onClick={loadReport}
-          className="px-3.5 py-2 text-xs font-semibold glass-pill hover:bg-white text-slate-700 rounded-xl flex items-center gap-1.5 transition-all shadow-xs"
+          className="w-full sm:w-auto px-4 py-2 text-xs font-bold glass-pill hover:bg-white/90 text-slate-800 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-[0.98]"
         >
           <RefreshCw className="w-3.5 h-3.5 text-sky-700" />
           <span>Refresh</span>
@@ -170,15 +170,15 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Glassmorphic Report Table */}
-      <div className="glass-card rounded-3xl overflow-hidden relative shadow-xs">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+      <div className="glass-card rounded-2xl sm:rounded-3xl overflow-hidden relative shadow-xs">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
-        <div className="p-4 border-b border-white/30 flex items-center justify-between">
-          <div className="text-sm font-bold text-slate-900">
+        <div className="p-3.5 sm:p-4 border-b border-white/30 flex items-center justify-between gap-2">
+          <div className="text-xs sm:text-sm font-bold text-slate-900 truncate">
             Hemas Hospital Thalawathugoda &bull;{' '}
             {reportTabs.find((t) => t.id === activeReport)?.label}
           </div>
-          <div className="text-xs font-semibold text-slate-500 glass-pill px-2.5 py-0.5 rounded-full">
+          <div className="text-[11px] sm:text-xs font-semibold text-slate-700 glass-pill px-2.5 py-0.5 rounded-full shrink-0">
             {rows.length} records
           </div>
         </div>
@@ -190,9 +190,9 @@ export const ReportsPage: React.FC = () => {
             No data found for the selected filters.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-100/50 backdrop-blur-md border-b border-white/30 text-slate-600 uppercase text-[11px]">
+          <div className="overflow-x-auto no-scrollbar">
+            <table className="min-w-[640px] w-full text-left text-xs">
+              <thead className="bg-white/30 backdrop-blur-md border-b border-white/40 text-slate-800 uppercase text-[11px]">
                 <tr>
                   {columns.map((col) => (
                     <th key={col} className="px-4 py-3 font-bold whitespace-nowrap">
