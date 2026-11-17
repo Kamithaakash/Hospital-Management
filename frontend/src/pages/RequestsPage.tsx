@@ -22,6 +22,7 @@ interface RequestsPageProps {
 export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onRefresh }) => {
   const { hasRole } = useAuth();
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showNewModal, setShowNewModal] = useState(false);
   const [rejectTarget, setRejectTarget] = useState<SupplyRequest | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -340,51 +341,86 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                 </div>
               </div>
 
-              {/* Line Items Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="text-slate-500 border-b border-slate-100">
-                      <th className="py-1.5 font-semibold">Item</th>
-                      <th className="py-1.5 font-semibold">Requested</th>
-                      <th className="py-1.5 font-semibold">Approved</th>
-                      <th className="py-1.5 font-semibold">Issued</th>
-                      <th className="py-1.5 font-semibold">Store Available</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {reqItem.items.map((li: any) => {
-                      const avail = li.availableStock ?? items.find((i) => i.id === li.itemId)?.totalStock ?? 0;
-                      return (
-                        <tr key={li.id}>
-                          <td className="py-2 font-medium text-slate-800">
-                            {li.item?.name}{' '}
-                            <span className="text-slate-400 font-mono">({li.item?.sku})</span>
-                          </td>
-                          <td className="py-2">
-                            {li.requestedQty} {li.item?.unit}
-                          </td>
-                          <td className="py-2">
-                            {li.approvedQty} {li.item?.unit}
-                          </td>
-                          <td className="py-2 font-semibold text-sky-700">
-                            {li.issuedQty} {li.item?.unit}
-                          </td>
-                          <td className="py-2">
-                            <span
-                              className={`font-semibold ${
-                                avail >= li.requestedQty ? 'text-emerald-700' : 'text-rose-600'
-                              }`}
-                            >
-                              {avail} {li.item?.unit}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              {/* Compact Item Chips + Expandable Details Table */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <div className="flex flex-wrap gap-1.5">
+                  {reqItem.items.map((li: any) => {
+                    const avail =
+                      li.availableStock ?? items.find((i) => i.id === li.itemId)?.totalStock ?? 0;
+                    return (
+                      <span
+                        key={li.id}
+                        className="text-xs px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-800"
+                      >
+                        <strong>{li.item?.name}:</strong> {li.requestedQty} {li.item?.unit}
+                        {li.issuedQty > 0 ? ` (Issued: ${li.issuedQty})` : ''}
+                        <span
+                          className={`ml-1.5 text-[11px] font-semibold ${
+                            avail >= li.requestedQty ? 'text-emerald-700' : 'text-rose-600'
+                          }`}
+                        >
+                          [Store: {avail}]
+                        </span>
+                      </span>
+                    );
+                  })}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setExpandedId(expandedId === reqItem.id ? null : reqItem.id)}
+                  className="text-xs font-semibold text-slate-500 hover:text-slate-800 underline"
+                >
+                  {expandedId === reqItem.id ? 'Hide Table' : 'Full Details'}
+                </button>
               </div>
+
+              {expandedId === reqItem.id && (
+                <div className="overflow-x-auto pt-2 border-t border-slate-100">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="text-slate-500 border-b border-slate-100">
+                        <th className="py-1.5 font-semibold">Item</th>
+                        <th className="py-1.5 font-semibold">Requested</th>
+                        <th className="py-1.5 font-semibold">Approved</th>
+                        <th className="py-1.5 font-semibold">Issued</th>
+                        <th className="py-1.5 font-semibold">Store Available</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {reqItem.items.map((li: any) => {
+                        const avail =
+                          li.availableStock ?? items.find((i) => i.id === li.itemId)?.totalStock ?? 0;
+                        return (
+                          <tr key={li.id}>
+                            <td className="py-2 font-medium text-slate-800">
+                              {li.item?.name}{' '}
+                              <span className="text-slate-400 font-mono">({li.item?.sku})</span>
+                            </td>
+                            <td className="py-2">
+                              {li.requestedQty} {li.item?.unit}
+                            </td>
+                            <td className="py-2">
+                              {li.approvedQty} {li.item?.unit}
+                            </td>
+                            <td className="py-2 font-semibold text-sky-700">
+                              {li.issuedQty} {li.item?.unit}
+                            </td>
+                            <td className="py-2">
+                              <span
+                                className={`font-semibold ${
+                                  avail >= li.requestedQty ? 'text-emerald-700' : 'text-rose-600'
+                                }`}
+                              >
+                                {avail} {li.item?.unit}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           ))
         )}

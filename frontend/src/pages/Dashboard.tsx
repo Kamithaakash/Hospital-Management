@@ -4,17 +4,15 @@ import { RoleBadge } from '../components/RoleBadge.js';
 import { Item, Alert, SupplyRequest, PurchaseOrder } from '../types/index.js';
 import {
   Package,
-  AlertTriangle,
   Clock,
   CheckCircle,
   Truck,
   QrCode,
   FileText,
   ShieldAlert,
-  ArrowUpRight,
+  ArrowRight,
   TrendingDown,
-  Layers,
-  Boxes,
+  BarChart3,
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -29,7 +27,6 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({
   items,
-  alerts,
   requests,
   purchaseOrders,
   onOpenQRScanner,
@@ -37,508 +34,312 @@ export const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const { user } = useAuth();
 
-  // Metrics calculations
   const totalItems = items.length;
-  const lowStockItems = items.filter((i) => i.stockStatus === 'LOW_STOCK');
+  const lowStockItems = items.filter(
+    (i) => i.stockStatus === 'LOW_STOCK' || i.stockStatus === 'OUT_OF_STOCK'
+  );
   const outOfStockItems = items.filter((i) => i.stockStatus === 'OUT_OF_STOCK');
   const expiringSoonCount = items.filter((i) => i.hasExpiringSoon).length;
   const expiredCount = items.filter((i) => i.hasExpired).length;
 
   const pendingRequests = requests.filter((r) => r.status === 'PENDING');
-  const approvedRequests = requests.filter((r) => r.status === 'APPROVED');
-  const openPOs = purchaseOrders.filter((po) => po.status === 'OPEN');
+  const approvedRequests = requests.filter(
+    (r) => r.status === 'APPROVED' || r.status === 'PARTIALLY_ISSUED'
+  );
+  const openPOs = purchaseOrders.filter(
+    (po) => po.status === 'OPEN' || po.status === 'PARTIALLY_RECEIVED'
+  );
+
+  const watchlistItems = items.filter(
+    (i) =>
+      i.stockStatus === 'LOW_STOCK' ||
+      i.stockStatus === 'OUT_OF_STOCK' ||
+      i.hasExpired ||
+      i.hasExpiringSoon
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Banner */}
-      <div className="bg-slate-900 rounded-xl p-6 text-white shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="space-y-5">
+      {/* Compact Header & Quick Actions */}
+      <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-medium px-2 py-0.5 rounded bg-slate-800 text-slate-300">
-              Hemas Hospital, Thalawathugoda
-            </span>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-lg font-bold text-slate-900">
+              {user?.fullName}
+            </h1>
+            <RoleBadge role={user?.role || 'ADMIN'} size="sm" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Welcome back, {user?.fullName}
-          </h1>
-          <p className="text-sm text-slate-300 mt-1 max-w-xl">
-            Housekeeping supply management dashboard. Track stock levels, active requests, and item dispatches.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Hemas Hospital, Thalawathugoda &bull; Smart Housekeeping Supply Management
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <RoleBadge role={user?.role || 'ADMIN'} size="md" />
-          <button
-            onClick={onOpenQRScanner}
-            className="px-3.5 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs shadow-xs flex items-center gap-2 transition-colors"
-          >
-            <QrCode className="w-4 h-4" />
-            <span>Scan QR Code</span>
-          </button>
-        </div>
-      </div>
-
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Total Items
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center">
-              <Package className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-bold text-slate-900">{totalItems}</div>
-            <div className="text-xs text-slate-500 mt-0.5">Active catalog items</div>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Low Stock Items
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-              <TrendingDown className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-bold text-amber-600">{lowStockItems.length}</div>
-            <div className="text-xs text-slate-500 mt-0.5">
-              {outOfStockItems.length > 0 ? `${outOfStockItems.length} out of stock` : 'At or below reorder level'}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Expiry Alerts
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-bold text-rose-600">
-              {expiringSoonCount + expiredCount}
-            </div>
-            <div className="text-xs text-slate-500 mt-0.5">
-              {expiredCount > 0 ? `${expiredCount} expired batches` : 'Batches expiring within 30 days'}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Pending Actions
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
-              <FileText className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-bold text-sky-700">
-              {pendingRequests.length + openPOs.length}
-            </div>
-            <div className="text-xs text-slate-500 mt-0.5">
-              {pendingRequests.length} requests, {openPOs.length} open POs
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Simple Quick Actions Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-wrap items-center justify-between gap-3">
-        <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-          Quick Actions
-        </span>
         <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => onNavigateTab('items')}
-            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-colors"
+            onClick={onOpenQRScanner}
+            className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors"
           >
-            Browse Inventory
+            <QrCode className="w-3.5 h-3.5" />
+            <span>Scan QR</span>
           </button>
           <button
             onClick={() => onNavigateTab('requests')}
-            className="px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-xs font-semibold transition-colors"
+            className="px-3.5 py-2 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs flex items-center gap-1.5 transition-colors"
           >
-            {user?.role === 'HOUSEKEEPING_SUPERVISOR'
-              ? 'New / My Requests'
-              : user?.role === 'MANAGER'
-              ? `Review Requests (${pendingRequests.length})`
-              : user?.role === 'STORES_STAFF'
-              ? `Issue Approved (${approvedRequests.length})`
-              : 'Supply Requests'}
+            <FileText className="w-3.5 h-3.5" />
+            <span>Requests ({pendingRequests.length + approvedRequests.length})</span>
           </button>
           <button
             onClick={() => onNavigateTab('procurement')}
-            className="px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold transition-colors"
+            className="px-3.5 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-semibold text-xs flex items-center gap-1.5 transition-colors"
           >
-            {user?.role === 'STORES_STAFF'
-              ? `Verify PO Deliveries (${openPOs.length})`
-              : `Purchase Orders (${openPOs.length})`}
+            <Truck className="w-3.5 h-3.5" />
+            <span>POs ({openPOs.length})</span>
           </button>
           <button
             onClick={() => onNavigateTab('reports')}
-            className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-semibold transition-colors"
+            className="px-3.5 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs flex items-center gap-1.5 transition-colors"
           >
-            Reports & CSV Export
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>Reports</span>
           </button>
         </div>
       </div>
 
-      {/* Role-Specific Workspaces */}
-      {user?.role === 'HOUSEKEEPING_SUPERVISOR' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-                <FileText className="w-5 h-5 text-sky-600" />
-                Recent Supply Requests
-              </h3>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-sky-100 text-sky-800">
-                {requests.length} Requests
-              </span>
-            </div>
-            <div className="divide-y divide-slate-100">
-              {requests.slice(0, 3).map((req) => (
-                <div key={req.id} className="py-3 flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm text-slate-900">
-                        {req.requestCode}
-                      </span>
-                      <span
-                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                          req.urgency === 'URGENT'
-                            ? 'bg-rose-100 text-rose-700'
-                            : 'bg-slate-100 text-slate-600'
-                        }`}
-                      >
-                        {req.urgency}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-600 mt-0.5">{req.targetArea}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{req.purpose}</p>
-                  </div>
-                  <span
-                    className={`text-xs font-bold px-2 py-1 rounded-full ${
-                      req.status === 'PENDING'
-                        ? 'bg-amber-100 text-amber-800'
-                        : req.status === 'APPROVED'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : 'bg-slate-100 text-slate-700'
-                    }`}
-                  >
-                    {req.status}
-                  </span>
-                </div>
-              ))}
-            </div>
+      {/* 4 Clickable KPI Summary Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <button
+          onClick={() => onNavigateTab('items')}
+          className="text-left bg-white p-4 rounded-xl border border-slate-200 hover:border-slate-300 shadow-2xs transition-all"
+        >
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+            <span>Catalog Items</span>
+            <Package className="w-4 h-4 text-slate-600" />
           </div>
+          <div className="text-2xl font-bold text-slate-900 mt-2">{totalItems}</div>
+          <div className="text-[11px] text-slate-400 mt-0.5">Click to browse inventory</div>
+        </button>
 
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs">
-            <h3 className="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-amber-600" />
-              Ward Supply Watchlist
-            </h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Items at or near reorder thresholds:
-            </p>
-            <div className="space-y-3">
-              {lowStockItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-3 rounded-lg border border-amber-200 bg-amber-50/50 flex items-center justify-between"
-                >
-                  <div>
-                    <div className="font-semibold text-sm text-slate-900">{item.name}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">
-                      Location: {item.storageLocation}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm font-bold text-amber-700">
-                      {item.totalStock} {item.unit}
-                    </span>
-                    <div className="text-[11px] text-slate-400">Reorder Level: {item.reorderPoint}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <button
+          onClick={() => onNavigateTab('items')}
+          className="text-left bg-white p-4 rounded-xl border border-slate-200 hover:border-amber-300 shadow-2xs transition-all"
+        >
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+            <span>Low / Out of Stock</span>
+            <TrendingDown className="w-4 h-4 text-amber-600" />
           </div>
-        </div>
-      )}
-
-      {user?.role === 'MANAGER' && (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-                <FileText className="w-5 h-5 text-slate-700" />
-                Requests Awaiting Approval
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Review and approve supply requests submitted by housekeeping supervisors.
-              </p>
-            </div>
-            <span className="text-xs font-bold px-2 py-1 rounded bg-slate-100 text-slate-800">
-              {pendingRequests.length} Pending
-            </span>
+          <div className="text-2xl font-bold text-amber-600 mt-2">{lowStockItems.length}</div>
+          <div className="text-[11px] text-slate-400 mt-0.5">
+            {outOfStockItems.length > 0 ? `${outOfStockItems.length} out of stock` : 'At or below reorder point'}
           </div>
+        </button>
 
-          {pendingRequests.length === 0 ? (
-            <div className="text-center py-8 text-slate-500 text-sm">
-              <CheckCircle className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
-              All submitted supply requests have been reviewed.
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {pendingRequests.map((req) => (
-                <div
-                  key={req.id}
-                  className="p-4 rounded-xl border border-slate-200 bg-slate-50"
-                >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-slate-900">{req.requestCode}</span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          req.urgency === 'URGENT'
-                            ? 'bg-rose-100 text-rose-700'
-                            : 'bg-slate-200 text-slate-700'
-                        }`}
-                      >
-                        {req.urgency}
-                      </span>
-                    </div>
-                    <span className="text-xs text-slate-500">
-                      Requested by {req.requestedBy.fullName}
-                    </span>
-                  </div>
+        <button
+          onClick={() => onNavigateTab('items')}
+          className="text-left bg-white p-4 rounded-xl border border-slate-200 hover:border-rose-300 shadow-2xs transition-all"
+        >
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+            <span>Expiry Watch</span>
+            <Clock className="w-4 h-4 text-rose-600" />
+          </div>
+          <div className="text-2xl font-bold text-rose-600 mt-2">
+            {expiringSoonCount + expiredCount}
+          </div>
+          <div className="text-[11px] text-slate-400 mt-0.5">
+            {expiredCount} expired &bull; {expiringSoonCount} expiring soon
+          </div>
+        </button>
 
-                  <p className="text-xs font-semibold text-slate-700">Area: {req.targetArea}</p>
-                  <p className="text-xs text-slate-600 mt-0.5">Purpose: {req.purpose}</p>
+        <button
+          onClick={() => onNavigateTab('requests')}
+          className="text-left bg-white p-4 rounded-xl border border-slate-200 hover:border-sky-300 shadow-2xs transition-all"
+        >
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+            <span>Active Workflows</span>
+            <FileText className="w-4 h-4 text-sky-600" />
+          </div>
+          <div className="text-2xl font-bold text-sky-700 mt-2">
+            {pendingRequests.length + approvedRequests.length + openPOs.length}
+          </div>
+          <div className="text-[11px] text-slate-400 mt-0.5">
+            {pendingRequests.length} pending &bull; {approvedRequests.length} to issue &bull; {openPOs.length} POs
+          </div>
+        </button>
+      </div>
 
-                  <div className="mt-3 pt-3 border-t border-slate-200">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                      Requested Items ({req.items.length}):
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {req.items.map((it) => (
-                        <span
-                          key={it.id}
-                          className="text-xs px-2.5 py-1 rounded-md bg-white border border-slate-200 font-medium text-slate-800"
-                        >
-                          {it.item.name}: <strong>{it.requestedQty} {it.item.unit}</strong>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {user?.role === 'STORES_STAFF' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-                <Boxes className="w-5 h-5 text-slate-700" />
-                Approved Requests Ready for Issue
-              </h3>
+      {/* Clean 2-Column Operational View */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Left Column: Active Tasks for Current Role */}
+        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs p-5 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h2 className="text-sm font-bold text-slate-900">
+                  {user?.role === 'MANAGER'
+                    ? 'Requests Awaiting Approval'
+                    : user?.role === 'STORES_STAFF'
+                    ? 'Ready for FEFO Issue & PO Verification'
+                    : user?.role === 'PROCUREMENT_STAFF'
+                    ? 'Active Purchase Orders'
+                    : 'Recent Supply Requests'}
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Priority items requiring action
+                </p>
+              </div>
               <button
-                onClick={onOpenQRScanner}
-                className="text-xs px-2.5 py-1 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-medium flex items-center gap-1 transition-colors"
+                onClick={() =>
+                  onNavigateTab(user?.role === 'PROCUREMENT_STAFF' ? 'procurement' : 'requests')
+                }
+                className="text-xs font-semibold text-sky-700 hover:text-sky-900 flex items-center gap-1"
               >
-                <QrCode className="w-3.5 h-3.5" />
-                Scan Item
+                <span>Open Queue</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
-            <p className="text-xs text-slate-500 mb-3">
-              Approved requests ready for physical issue from stores:
-            </p>
-            <div className="space-y-3">
-              {approvedRequests.length === 0 ? (
-                <div className="p-4 text-center text-xs text-slate-400 bg-slate-50 rounded-lg">
-                  No approved requests pending issue.
-                </div>
+
+            <div className="divide-y divide-slate-100 mt-2">
+              {user?.role === 'PROCUREMENT_STAFF' ? (
+                purchaseOrders.slice(0, 4).map((po) => (
+                  <div key={po.id} className="py-3 flex items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-xs text-slate-900">
+                          {po.poNumber}
+                        </span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-sky-50 text-sky-800 border border-sky-200">
+                          {po.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        {po.supplierName} &bull; {po.items.length} item(s)
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => onNavigateTab('procurement')}
+                      className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700"
+                    >
+                      View PO
+                    </button>
+                  </div>
+                ))
               ) : (
-                approvedRequests.map((req) => (
-                  <div key={req.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50">
-                    <div className="font-semibold text-sm text-slate-900">{req.requestCode}</div>
-                    <div className="text-xs text-slate-500">{req.targetArea}</div>
+                requests.slice(0, 4).map((req) => (
+                  <div key={req.id} className="py-3 flex items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-xs text-slate-900">
+                          {req.requestCode}
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                            req.status === 'PENDING'
+                              ? 'bg-amber-100 text-amber-800'
+                              : req.status === 'APPROVED'
+                              ? 'bg-sky-100 text-sky-800'
+                              : req.status === 'FULFILLED'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {req.status}
+                        </span>
+                        {req.urgency === 'URGENT' && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-600 text-white">
+                            URGENT
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        {req.targetArea} &bull; {req.items.length} item(s)
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => onNavigateTab('requests')}
+                      className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800"
+                    >
+                      {req.status === 'PENDING' && user?.role === 'MANAGER'
+                        ? 'Review'
+                        : req.status === 'APPROVED' && user?.role === 'STORES_STAFF'
+                        ? 'Issue FEFO'
+                        : 'Open'}
+                    </button>
                   </div>
                 ))
               )}
+
+              {requests.length === 0 && user?.role !== 'PROCUREMENT_STAFF' && (
+                <div className="py-8 text-center text-xs text-slate-400">
+                  <CheckCircle className="w-6 h-6 text-emerald-500 mx-auto mb-1.5" />
+                  No active requests in queue.
+                </div>
+              )}
             </div>
           </div>
+        </div>
 
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs">
-            <h3 className="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
-              <Truck className="w-5 h-5 text-slate-700" />
-              Incoming Deliveries to Inspect
-            </h3>
-            <p className="text-xs text-slate-500 mb-3">
-              Pending vendor shipments awaiting verification and batch check-in:
-            </p>
-            <div className="space-y-3">
-              {openPOs.map((po) => (
-                <div
-                  key={po.id}
-                  className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between"
-                >
-                  <div>
-                    <div className="font-semibold text-sm text-slate-900">{po.poNumber}</div>
-                    <div className="text-xs text-slate-500">{po.supplierName}</div>
-                    <div className="text-[11px] text-slate-400">
-                      {po.items.length} line items ordered
+        {/* Right Column: Critical Stock & Expiry Watchlist */}
+        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs p-5 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h2 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                  <ShieldAlert className="w-4 h-4 text-amber-600" />
+                  <span>Attention Needed (Low Stock & Expiry)</span>
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Items below reorder threshold or with expiring/expired batches
+                </p>
+              </div>
+              <button
+                onClick={() => onNavigateTab('items')}
+                className="text-xs font-semibold text-sky-700 hover:text-sky-900 flex items-center gap-1"
+              >
+                <span>All Items ({items.length})</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="divide-y divide-slate-100 mt-2">
+              {watchlistItems.slice(0, 5).map((item) => (
+                <div key={item.id} className="py-2.5 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="font-semibold text-xs text-slate-900 truncate">
+                      {item.name}{' '}
+                      <span className="font-mono text-[11px] text-slate-400">({item.sku})</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 flex flex-wrap items-center gap-1.5 mt-0.5">
+                      <span>{item.storageLocation}</span>
+                      {item.hasExpired && (
+                        <span className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-700 font-semibold text-[10px]">
+                          Expired Batch
+                        </span>
+                      )}
+                      {item.hasExpiringSoon && (
+                        <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-semibold text-[10px]">
+                          Expiring Soon
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <span className="text-xs font-bold px-2 py-1 rounded bg-sky-100 text-sky-800">
-                    {po.status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {user?.role === 'PROCUREMENT_STAFF' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs">
-            <h3 className="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
-              <TrendingDown className="w-5 h-5 text-slate-700" />
-              Low-Stock Items for Reorder
-            </h3>
-            <p className="text-xs text-slate-500 mb-3">
-              Stock items currently at or below minimum threshold:
-            </p>
-            <div className="space-y-3">
-              {lowStockItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between"
-                >
-                  <div>
-                    <div className="font-semibold text-sm text-slate-900">{item.name}</div>
-                    <div className="text-xs text-slate-500">SKU: {item.sku} • {item.category}</div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm font-bold text-rose-600">
-                      {item.totalStock} {item.unit}
-                    </span>
-                    <div className="text-[11px] text-slate-500">Reorder Level: {item.reorderPoint}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs">
-            <h3 className="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
-              <Truck className="w-5 h-5 text-slate-700" />
-              Active Purchase Orders
-            </h3>
-            <div className="space-y-3">
-              {purchaseOrders.map((po) => (
-                <div key={po.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-slate-900">{po.poNumber}</span>
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded bg-sky-100 text-sky-800">
-                      {po.status}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-600 mt-1">Supplier: {po.supplierName}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Items: {po.items.map((i) => `${i.item.name} (${i.orderedQty})`).join(', ')}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Stock Catalog Preview Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div className="p-5 border-b border-slate-200 flex items-center justify-between">
-          <div>
-            <h3 className="font-bold text-slate-900 text-base">
-              Housekeeping Inventory Overview
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Current available stock with batch counts and storage location
-            </p>
-          </div>
-          <button
-            onClick={() => onNavigateTab('items')}
-            className="text-xs font-semibold text-sky-700 hover:text-sky-900 flex items-center gap-1"
-          >
-            <span>View Full Catalog</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200">
-                <th className="py-3 px-4">Item SKU & Name</th>
-                <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4">Storage Location</th>
-                <th className="py-3 px-4 text-center">Batches</th>
-                <th className="py-3 px-4 text-right">Available Stock</th>
-                <th className="py-3 px-4 text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
-              {items.slice(0, 7).map((item) => (
-                <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="py-3 px-4">
-                    <div className="font-semibold text-slate-900">{item.name}</div>
-                    <div className="text-xs font-mono text-slate-400">{item.sku}</div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">
-                      {item.category}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-xs text-slate-600">{item.storageLocation}</td>
-                  <td className="py-3 px-4 text-center">
-                    <span className="text-xs font-semibold text-slate-700">
-                      {item.batchCount || 0}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-right font-bold text-slate-900">
-                    {item.totalStock} <span className="text-xs font-normal text-slate-500">{item.unit}</span>
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    <span
-                      className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                        item.stockStatus === 'IN_STOCK'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  <div className="text-right shrink-0">
+                    <div
+                      className={`text-xs font-bold ${
+                        item.stockStatus === 'OUT_OF_STOCK'
+                          ? 'text-rose-600'
                           : item.stockStatus === 'LOW_STOCK'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                          : 'bg-rose-50 text-rose-700 border border-rose-200'
+                          ? 'text-amber-600'
+                          : 'text-slate-800'
                       }`}
                     >
-                      {item.stockStatus?.replace('_', ' ')}
-                    </span>
-                  </td>
-                </tr>
+                      {item.totalStock} {item.unit}
+                    </div>
+                    <div className="text-[10px] text-slate-400">ROP: {item.reorderPoint}</div>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

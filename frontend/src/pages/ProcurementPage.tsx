@@ -38,6 +38,7 @@ export const ProcurementPage: React.FC<ProcurementPageProps> = ({
 }) => {
   const { hasRole } = useAuth();
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [expandedPoId, setExpandedPoId] = useState<string | null>(null);
   const [showNewPOModal, setShowNewPOModal] = useState(false);
   const [inspectPO, setInspectPO] = useState<PurchaseOrder | null>(null);
   const [deliveryLines, setDeliveryLines] = useState<DeliveryLineState[]>([]);
@@ -264,52 +265,80 @@ export const ProcurementPage: React.FC<ProcurementPageProps> = ({
                 )}
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="text-slate-500 border-b border-slate-100">
-                      <th className="py-1.5 font-semibold">Item</th>
-                      <th className="py-1.5 font-semibold">Ordered Qty</th>
-                      <th className="py-1.5 font-semibold">Accepted (Good) Qty</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {po.items.map((pi) => (
-                      <tr key={pi.id}>
-                        <td className="py-2 font-medium text-slate-800">
-                          {pi.item?.name}{' '}
-                          <span className="text-slate-400 font-mono">({pi.item?.sku})</span>
-                        </td>
-                        <td className="py-2">
-                          {pi.orderedQty} {pi.item?.unit}
-                        </td>
-                        <td className="py-2 font-semibold text-emerald-700">
-                          {pi.receivedQty} {pi.item?.unit}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {/* Compact Item Chips + Expandable Details */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <div className="flex flex-wrap gap-1.5">
+                  {po.items.map((pi) => (
+                    <span
+                      key={pi.id}
+                      className="text-xs px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-800"
+                    >
+                      <strong>{pi.item?.name}:</strong> {pi.orderedQty} {pi.item?.unit}
+                      <span className="ml-1.5 text-[11px] font-semibold text-emerald-700">
+                        [Accepted: {pi.receivedQty}]
+                      </span>
+                    </span>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setExpandedPoId(expandedPoId === po.id ? null : po.id)}
+                  className="text-xs font-semibold text-slate-500 hover:text-slate-800 underline"
+                >
+                  {expandedPoId === po.id ? 'Hide Details' : 'Full Details'}
+                </button>
               </div>
 
-              {po.deliveries && po.deliveries.length > 0 && (
-                <div className="bg-slate-50 rounded-lg p-3 space-y-1">
-                  <div className="text-[11px] font-bold text-slate-600 uppercase">
-                    Inspection History
+              {expandedPoId === po.id && (
+                <div className="space-y-3 pt-2 border-t border-slate-100">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="text-slate-500 border-b border-slate-100">
+                          <th className="py-1.5 font-semibold">Item</th>
+                          <th className="py-1.5 font-semibold">Ordered Qty</th>
+                          <th className="py-1.5 font-semibold">Accepted (Good) Qty</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {po.items.map((pi) => (
+                          <tr key={pi.id}>
+                            <td className="py-2 font-medium text-slate-800">
+                              {pi.item?.name}{' '}
+                              <span className="text-slate-400 font-mono">({pi.item?.sku})</span>
+                            </td>
+                            <td className="py-2">
+                              {pi.orderedQty} {pi.item?.unit}
+                            </td>
+                            <td className="py-2 font-semibold text-emerald-700">
+                              {pi.receivedQty} {pi.item?.unit}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                  {po.deliveries.map((d: any) => (
-                    <div key={d.id} className="text-xs text-slate-700 flex flex-wrap gap-2">
-                      <span>{new Date(d.verifiedAt).toLocaleString()}:</span>
-                      <span className="font-semibold">
-                        Received {d.receivedQty} (Accepted: {d.acceptedQty}) — {d.condition}
-                      </span>
-                      {d.discrepancyNote && (
-                        <span className="text-rose-700 font-medium">
-                          Note: {d.discrepancyNote}
-                        </span>
-                      )}
+
+                  {po.deliveries && po.deliveries.length > 0 && (
+                    <div className="bg-slate-50 rounded-lg p-3 space-y-1">
+                      <div className="text-[11px] font-bold text-slate-600 uppercase">
+                        Inspection History
+                      </div>
+                      {po.deliveries.map((d: any) => (
+                        <div key={d.id} className="text-xs text-slate-700 flex flex-wrap gap-2">
+                          <span>{new Date(d.verifiedAt).toLocaleString()}:</span>
+                          <span className="font-semibold">
+                            Received {d.receivedQty} (Accepted: {d.acceptedQty}) — {d.condition}
+                          </span>
+                          {d.discrepancyNote && (
+                            <span className="text-rose-700 font-medium">
+                              Note: {d.discrepancyNote}
+                            </span>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
             </div>

@@ -68,7 +68,10 @@ export const ReportsPage: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
+  const columns =
+    rows.length > 0
+      ? Object.keys(rows[0]).filter((k) => k !== 'id' && !k.endsWith('Id'))
+      : [];
 
   return (
     <div className="space-y-6">
