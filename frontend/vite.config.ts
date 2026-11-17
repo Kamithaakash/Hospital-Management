@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5173,
     host: true,
     watch: {
-      ignored: ['**/images/**', '**/public/**', '**/*.png', '**/*.jpg'],
+      ignored: ['**/images/**', '**/public/**', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.ico'],
     },
     proxy: {
       '/api': {

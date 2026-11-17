@@ -71,22 +71,16 @@ function MainLayout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-slate-50/80 text-slate-900 selection:bg-sky-500 selection:text-white">
-      {/* Dynamic Ambient Background Glow Mesh for Glassmorphism Depth */}
+    <div className="min-h-screen flex flex-col relative text-slate-900 selection:bg-sky-500 selection:text-white">
+      {/* Fixed Still Background - Pastel Network Glow Background */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        {/* Soft radial blue gradient at top-left */}
-        <div className="absolute -top-32 -left-32 w-[32rem] h-[32rem] bg-sky-200/35 rounded-full blur-3xl" />
-        {/* Soft radial teal gradient at top-right */}
-        <div className="absolute top-12 -right-24 w-[28rem] h-[28rem] bg-teal-100/35 rounded-full blur-3xl" />
-        {/* Soft radial sky gradient near center */}
-        <div className="absolute top-1/2 left-1/4 w-[36rem] h-[36rem] bg-blue-100/25 rounded-full blur-3xl" />
-        {/* Soft bottom accent */}
-        <div className="absolute -bottom-24 right-1/4 w-[30rem] h-[30rem] bg-cyan-100/30 rounded-full blur-3xl" />
-        {/* Subtle hospital tech dot grid */}
-        <div 
-          className="absolute inset-0 opacity-[0.025]" 
-          style={{ backgroundImage: 'radial-gradient(#0284c7 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }} 
+        <img
+          src="/images/pastel-bg.png"
+          alt="Pastel Network Glow Background"
+          className="w-full h-full object-cover object-center select-none"
         />
+        {/* Subtle translucent veil for high readability while letting pastel glow refract through glassmorphism blocks */}
+        <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-[0.5px]" />
       </div>
 
       <Navbar
@@ -132,10 +126,17 @@ function MainLayout() {
         onStockUpdated={fetchAppData}
       />
 
+<<<<<<< Updated upstream
       <footer className="glass-header border-t border-b-0 py-4 text-xs text-slate-500 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span className="font-medium text-slate-600">Hemas Hospital Thalawathugoda &bull; Smart Housekeeping Supply Management</span>
           <span className="text-slate-400 font-mono text-[11px]">System v1.0 &bull; Internal Use Only</span>
+=======
+      <footer className="glass-header border-t border-b-0 py-4 text-xs text-slate-600 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span className="font-medium text-slate-700">Hemas Hospital Thalawathugoda &bull; Smart Housekeeping Supply Management</span>
+          <span className="text-slate-500 font-mono text-[11px]">Internal Use Only</span>
+>>>>>>> Stashed changes
         </div>
       </footer>
     </div>
