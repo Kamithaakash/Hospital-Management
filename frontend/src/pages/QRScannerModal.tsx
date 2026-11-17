@@ -3,7 +3,7 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { api } from '../services/api.js';
 import { Item } from '../types/index.js';
 import { useAuth } from '../context/AuthContext.js';
-import { QrCode, X, Search, AlertCircle } from 'lucide-react';
+import { QrCode, X, Search, AlertCircle, Sparkles } from 'lucide-react';
 
 interface QRScannerModalProps {
   isOpen: boolean;
@@ -98,29 +98,29 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="glass-modal rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-700"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center">
-            <QrCode className="w-4 h-4" />
+        <div className="flex items-center gap-2.5 mb-2">
+          <div className="w-9 h-9 rounded-xl bg-sky-500/15 border border-sky-400/30 text-sky-700 flex items-center justify-center shadow-xs">
+            <QrCode className="w-5 h-5" />
           </div>
           <div>
             <h3 className="font-bold text-slate-900 text-lg">QR Code Scanner</h3>
-            <p className="text-xs text-slate-500">
-              Scan item QR code or enter SKU manually
+            <p className="text-xs text-slate-500 font-medium">
+              Scan physical item QR label or enter SKU code manually
             </p>
           </div>
         </div>
 
         {/* Camera Scanner Viewport */}
-        <div className="my-4 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 p-2">
+        <div className="my-4 glass-card rounded-2xl overflow-hidden p-2">
           <div id="qr-reader" className="w-full"></div>
         </div>
 
@@ -133,13 +133,13 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
               placeholder="Or enter SKU (e.g. HEM-CHM-001)"
               value={manualCode}
               onChange={(e) => setManualCode(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-600 font-mono"
+              className="glass-input w-full pl-9 pr-3 py-2 text-xs rounded-xl font-mono"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-medium disabled:opacity-50"
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold disabled:opacity-50 shadow-xs transition-all active:scale-[0.98]"
           >
             {loading ? 'Searching...' : 'Lookup'}
           </button>
@@ -147,53 +147,53 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
 
         {/* Lookup Result View */}
         {error && (
-          <div className="p-3 mb-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+          <div className="p-3 mb-3 rounded-2xl bg-rose-500/15 border border-rose-400/30 text-rose-900 text-xs font-semibold flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
 
         {scannedItem && (
-          <div className="p-4 rounded-xl border border-sky-300 bg-sky-50/50 space-y-3">
+          <div className="p-5 rounded-2xl glass-card space-y-3.5 border-sky-400/40 relative overflow-hidden">
             <div className="flex items-start justify-between">
               <div>
-                <span className="text-[10px] font-bold text-sky-800 uppercase tracking-wider bg-sky-200/60 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-bold text-sky-900 uppercase tracking-wider bg-sky-500/15 border border-sky-400/30 px-2.5 py-0.5 rounded-full">
                   {scannedItem.category}
                 </span>
-                <h4 className="font-bold text-slate-900 text-base mt-1">
+                <h4 className="font-bold text-slate-900 text-base mt-1.5">
                   {scannedItem.name}
                 </h4>
-                <div className="text-xs font-mono text-slate-500">{scannedItem.sku}</div>
+                <div className="text-xs font-mono text-slate-500 mt-0.5">{scannedItem.sku}</div>
               </div>
               <div className="text-right">
-                <div className="text-xl font-extrabold text-slate-900">
+                <div className="text-2xl font-extrabold text-slate-900">
                   {scannedItem.totalStock}
                 </div>
-                <div className="text-[11px] text-slate-500">{scannedItem.unit} Available</div>
+                <div className="text-[11px] text-slate-500 font-medium">{scannedItem.unit} Available</div>
               </div>
             </div>
 
-            <div className="text-xs text-slate-600 pt-2 border-t border-sky-200/60 space-y-1">
-              <div>Storage Location: <strong>{scannedItem.storageLocation}</strong></div>
-              <div>Reorder Threshold: <strong>{scannedItem.reorderPoint} {scannedItem.unit}</strong></div>
-              <div>Minimum Stock: <strong>{scannedItem.minStockLevel} {scannedItem.unit}</strong></div>
+            <div className="text-xs text-slate-600 pt-2 border-t border-white/60 space-y-1 font-medium">
+              <div>Storage Location: <strong className="text-slate-800">{scannedItem.storageLocation}</strong></div>
+              <div>Reorder Threshold: <strong className="text-slate-800">{scannedItem.reorderPoint} {scannedItem.unit}</strong></div>
+              <div>Minimum Stock: <strong className="text-slate-800">{scannedItem.minStockLevel} {scannedItem.unit}</strong></div>
             </div>
 
             {scannedItem.batches && scannedItem.batches.length > 0 && (
-              <div className="pt-2 border-t border-sky-200/60">
-                <span className="text-[11px] font-bold text-slate-700 block mb-1">
+              <div className="pt-2 border-t border-white/60">
+                <span className="text-[11px] font-bold text-slate-700 block mb-1.5">
                   Active Batches ({scannedItem.batches.length}):
                 </span>
-                <div className="space-y-1 max-h-32 overflow-y-auto">
+                <div className="space-y-1.5 max-h-32 overflow-y-auto">
                   {scannedItem.batches.map((b) => (
                     <div
                       key={b.id}
-                      className="text-xs p-1.5 rounded bg-white border border-sky-100 flex items-center justify-between"
+                      className="text-xs p-2 rounded-xl glass-pill flex items-center justify-between"
                     >
-                      <span className="font-mono text-slate-800">
+                      <span className="font-mono text-slate-900 font-semibold">
                         {b.batchNumber} ({b.remainingQty} {scannedItem.unit})
                       </span>
-                      <span className="text-[10px] text-slate-500">
+                      <span className="text-[10px] text-slate-500 font-medium">
                         Exp: {b.expiryDate ? new Date(b.expiryDate).toLocaleDateString() : 'None'}
                       </span>
                     </div>
@@ -202,10 +202,10 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
               </div>
             )}
 
-            {/* Quick Stores Actions (FR-1.4) */}
+            {/* Quick Stores Actions */}
             {hasRole(['STORES_STAFF', 'ADMIN']) && (
-              <div className="pt-3 border-t border-sky-200 space-y-2">
-                <div className="text-[11px] font-bold text-slate-700 uppercase">
+              <div className="pt-3 border-t border-white/60 space-y-2">
+                <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                   Quick QR Stock Action
                 </div>
                 <div className="flex flex-wrap gap-2 items-center">
@@ -214,7 +214,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
                     min={1}
                     value={quickQty}
                     onChange={(e) => setQuickQty(Number(e.target.value))}
-                    className="w-20 px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg bg-white"
+                    className="glass-input w-20 px-2.5 py-1.5 text-xs rounded-xl font-bold"
                     placeholder="Qty"
                   />
                   {scannedItem.tracksExpiry && (
@@ -222,7 +222,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
                       type="date"
                       value={quickExpiry}
                       onChange={(e) => setQuickExpiry(e.target.value)}
-                      className="px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg bg-white"
+                      className="glass-input px-2.5 py-1.5 text-xs rounded-xl"
                       title="Expiry date for stock receipt"
                     />
                   )}
@@ -248,7 +248,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
                         setLoading(false);
                       }
                     }}
-                    className="px-3 py-1.5 text-xs font-semibold bg-sky-700 hover:bg-sky-800 text-white rounded-lg"
+                    className="px-3 py-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-600/20 active:scale-[0.98] transition-all"
                   >
                     Issue (FEFO)
                   </button>
@@ -275,13 +275,13 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
                         setLoading(false);
                       }
                     }}
-                    className="px-3 py-1.5 text-xs font-semibold bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg"
+                    className="px-3 py-1.5 text-xs font-semibold bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-md shadow-emerald-700/20 active:scale-[0.98] transition-all"
                   >
                     Receive Stock
                   </button>
                 </div>
                 {actionStatus && (
-                  <p className="text-xs font-medium text-emerald-700">{actionStatus}</p>
+                  <p className="text-xs font-semibold text-emerald-700 mt-1">{actionStatus}</p>
                 )}
               </div>
             )}

@@ -352,7 +352,7 @@ export async function receiveStock(req: AuthenticatedRequest, res: Response) {
     if (item.tracksExpiry && !expiryDate) {
       return res.status(400).json({
         success: false,
-        message: `Expiry date is required for expiry-tracked item "${item.name}" (FR-5.1).`,
+        message: `Expiry date is required for expiry-tracked item "${item.name}".`,
       });
     }
 
@@ -576,7 +576,7 @@ export async function disposeBatch(req: AuthenticatedRequest, res: Response) {
     if (!reason || !String(reason).trim()) {
       return res.status(400).json({
         success: false,
-        message: 'A formal disposal/wastage reason is required (FR-5.4).',
+        message: 'A formal disposal or wastage reason is required.',
       });
     }
 

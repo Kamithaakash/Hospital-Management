@@ -265,7 +265,7 @@ export const api = {
     return handleResponse<any>(res);
   },
 
-  // Reports (FR-6)
+  // Reports
   async getReport(
     reportType: 'stock-availability' | 'consumption' | 'shortages' | 'procurement-performance' | 'wastage',
     params?: { startDate?: string; endDate?: string; category?: string }

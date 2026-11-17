@@ -11,6 +11,9 @@ import {
   Clock,
   Trash2,
   X,
+  FileText,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 
 interface RequestsPageProps {
@@ -161,16 +164,16 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
 
   const statusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      PENDING: 'bg-amber-50 text-amber-800 border-amber-200',
-      APPROVED: 'bg-sky-50 text-sky-800 border-sky-200',
-      PARTIALLY_ISSUED: 'bg-indigo-50 text-indigo-800 border-indigo-200',
-      FULFILLED: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-      REJECTED: 'bg-rose-50 text-rose-800 border-rose-200',
-      CANCELLED: 'bg-slate-100 text-slate-600 border-slate-200',
-      DRAFT: 'bg-slate-100 text-slate-600 border-slate-200',
+      PENDING: 'bg-amber-500/15 text-amber-900 border-amber-400/30',
+      APPROVED: 'bg-sky-500/15 text-sky-900 border-sky-400/30',
+      PARTIALLY_ISSUED: 'bg-indigo-500/15 text-indigo-900 border-indigo-400/30',
+      FULFILLED: 'bg-emerald-500/15 text-emerald-900 border-emerald-400/30',
+      REJECTED: 'bg-rose-500/15 text-rose-900 border-rose-400/30',
+      CANCELLED: 'bg-slate-200/60 text-slate-700 border-slate-300/60',
+      DRAFT: 'bg-slate-200/60 text-slate-700 border-slate-300/60',
     };
     return (
-      <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${styles[status] || styles.PENDING}`}>
+      <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border backdrop-blur-xs ${styles[status] || styles.PENDING}`}>
         {status.replace('_', ' ')}
       </span>
     );
@@ -180,11 +183,12 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-            Supply Requests & FEFO Issuance
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <FileText className="w-5 h-5 text-sky-700" />
+            <span>Supply Requests & FEFO Issuance</span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Submit ward requests (FR-3.1), review approvals (FR-3.3), and issue via FEFO (FR-5.3).
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
+            Submit ward supply requests, review approvals, and dispatch stock.
           </p>
         </div>
 
@@ -196,7 +200,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
               }
               setShowNewModal(true);
             }}
-            className="px-4 py-2 rounded-lg bg-sky-700 hover:bg-sky-800 text-white font-medium text-xs shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-600/20 flex items-center gap-1.5 self-start sm:self-auto active:scale-[0.98] transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>New Supply Request</span>
@@ -206,10 +210,10 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
 
       {actionMsg && (
         <div
-          className={`p-3 rounded-lg border text-xs font-medium flex items-center justify-between ${
+          className={`p-3.5 rounded-2xl border text-xs font-semibold backdrop-blur-md flex items-center justify-between shadow-xs ${
             actionMsg.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-rose-50 border-rose-200 text-rose-800'
+              ? 'bg-emerald-500/15 border-emerald-400/30 text-emerald-900'
+              : 'bg-rose-500/15 border-rose-400/30 text-rose-900'
           }`}
         >
           <span>{actionMsg.text}</span>
@@ -219,16 +223,18 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
         </div>
       )}
 
-      {/* Status Filter */}
-      <div className="flex flex-wrap gap-1.5 bg-white p-3 rounded-xl border border-slate-200">
+      {/* Glassmorphic Status Filter */}
+      <div className="flex flex-wrap gap-1.5 glass-card p-3 rounded-2xl relative overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+
         {['ALL', 'PENDING', 'APPROVED', 'PARTIALLY_ISSUED', 'FULFILLED', 'REJECTED'].map((st) => (
           <button
             key={st}
             onClick={() => setStatusFilter(st)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all ${
               statusFilter === st
-                ? 'bg-slate-900 text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'glass-pill text-slate-700 hover:bg-white'
             }`}
           >
             {st.replace('_', ' ')}
@@ -239,41 +245,43 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
       {/* Requests List */}
       <div className="space-y-4">
         {filteredRequests.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-10 text-center text-sm text-slate-500">
+          <div className="glass-card rounded-3xl p-10 text-center text-sm text-slate-500 font-medium">
             No supply requests found for this filter.
           </div>
         ) : (
           filteredRequests.map((reqItem: any) => (
             <div
               key={reqItem.id}
-              className="bg-white rounded-xl border border-slate-200 shadow-2xs p-5 space-y-4"
+              className="glass-card rounded-3xl p-6 relative overflow-hidden space-y-4 shadow-xs"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/60 pb-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono font-bold text-sm text-slate-900">
-                      {reqItem.requestCode}
+                    <span className="font-bold text-sm text-slate-900">
+                      Request #{reqItem.requestCode.replace(/^REQ-/, '')}
                     </span>
                     {statusBadge(reqItem.status)}
                     {reqItem.urgency === 'URGENT' && (
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-rose-600 text-white">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white shadow-xs">
                         URGENT
                       </span>
                     )}
                     {reqItem.fulfillmentCheck === 'REQUIRES_PROCUREMENT' &&
                       (reqItem.status === 'PENDING' || reqItem.status === 'APPROVED') && (
-                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" />
+                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-900 border border-amber-400/30 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3 text-amber-700" />
                           Stock Shortfall — Needs Procurement
                         </span>
                       )}
                   </div>
-                  <p className="text-xs text-slate-600 mt-1">
+                  <p className="text-xs text-slate-600 font-medium mt-1">
                     <strong>Area:</strong> {reqItem.targetArea} &bull; <strong>Purpose:</strong>{' '}
-                    {reqItem.purpose} &bull; <strong>By:</strong> {reqItem.requestedBy?.fullName}
+                    {reqItem.purpose} &bull; <strong>Requested By:</strong> {reqItem.requestedBy?.fullName}
                   </p>
                   {reqItem.rejectionReason && (
-                    <p className="text-xs text-rose-700 mt-1 font-medium">
+                    <p className="text-xs text-rose-700 mt-1 font-semibold">
                       Rejection Reason: {reqItem.rejectionReason}
                     </p>
                   )}
@@ -286,7 +294,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                       <button
                         disabled={isBusy}
                         onClick={() => handleApprove(reqItem)}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1"
+                        className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1 shadow-xs transition-all active:scale-[0.98]"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Approve Full
@@ -301,14 +309,14 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                           setPartialQtys(map);
                           setPartialTarget(reqItem);
                         }}
-                        className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold"
+                        className="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
                       >
                         Partial Approve
                       </button>
                       <button
                         disabled={isBusy}
                         onClick={() => setRejectTarget(reqItem)}
-                        className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold flex items-center gap-1"
+                        className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold flex items-center gap-1 shadow-xs transition-all active:scale-[0.98]"
                       >
                         <XCircle className="w-3.5 h-3.5" />
                         Reject
@@ -321,7 +329,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                       <button
                         disabled={isBusy}
                         onClick={() => openIssueModal(reqItem)}
-                        className="px-3 py-1.5 rounded-lg bg-sky-700 hover:bg-sky-800 text-white text-xs font-semibold flex items-center gap-1"
+                        className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1 shadow-md shadow-blue-600/20 transition-all active:scale-[0.98]"
                       >
                         <PackageCheck className="w-3.5 h-3.5" />
                         Issue Stock (FEFO)
@@ -333,7 +341,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                       <button
                         disabled={isBusy}
                         onClick={() => handleCancel(reqItem.id)}
-                        className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-medium"
+                        className="px-3 py-1.5 rounded-xl glass-pill text-slate-700 hover:bg-white text-xs font-semibold transition-all"
                       >
                         Cancel
                       </button>
@@ -341,7 +349,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                 </div>
               </div>
 
-              {/* Compact Item Chips + Expandable Details Table */}
+              {/* Items chips + Expand details */}
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                 <div className="flex flex-wrap gap-1.5">
                   {reqItem.items.map((li: any) => {
@@ -350,75 +358,82 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                     return (
                       <span
                         key={li.id}
-                        className="text-xs px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-800"
+                        className="text-xs px-2.5 py-1 rounded-xl glass-pill font-medium text-slate-800"
                       >
-                        <strong>{li.item?.name}:</strong> {li.requestedQty} {li.item?.unit}
-                        {li.issuedQty > 0 ? ` (Issued: ${li.issuedQty})` : ''}
-                        <span
-                          className={`ml-1.5 text-[11px] font-semibold ${
-                            avail >= li.requestedQty ? 'text-emerald-700' : 'text-rose-600'
-                          }`}
-                        >
-                          [Store: {avail}]
-                        </span>
+                        {li.item?.name}: <strong>{li.requestedQty}</strong>
+                        {li.approvedQty !== null && li.approvedQty !== undefined && (
+                          <span className="text-slate-500 font-normal">
+                            {' '}
+                            (Appr: {li.approvedQty}, Issued: {li.issuedQty})
+                          </span>
+                        )}
                       </span>
                     );
                   })}
                 </div>
+
                 <button
-                  type="button"
                   onClick={() => setExpandedId(expandedId === reqItem.id ? null : reqItem.id)}
-                  className="text-xs font-semibold text-slate-500 hover:text-slate-800 underline"
+                  className="text-xs font-bold text-sky-700 hover:text-sky-900 flex items-center gap-1 glass-pill px-2.5 py-1 rounded-xl"
                 >
-                  {expandedId === reqItem.id ? 'Hide Table' : 'Full Details'}
+                  <span>{expandedId === reqItem.id ? 'Hide Details' : 'Details & Audit'}</span>
+                  {expandedId === reqItem.id ? (
+                    <ChevronDown className="w-3 h-3" />
+                  ) : (
+                    <ChevronRight className="w-3 h-3" />
+                  )}
                 </button>
               </div>
 
+              {/* Expandable audit drawer */}
               {expandedId === reqItem.id && (
-                <div className="overflow-x-auto pt-2 border-t border-slate-100">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="text-slate-500 border-b border-slate-100">
-                        <th className="py-1.5 font-semibold">Item</th>
-                        <th className="py-1.5 font-semibold">Requested</th>
-                        <th className="py-1.5 font-semibold">Approved</th>
-                        <th className="py-1.5 font-semibold">Issued</th>
-                        <th className="py-1.5 font-semibold">Store Available</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {reqItem.items.map((li: any) => {
-                        const avail =
-                          li.availableStock ?? items.find((i) => i.id === li.itemId)?.totalStock ?? 0;
-                        return (
-                          <tr key={li.id}>
-                            <td className="py-2 font-medium text-slate-800">
-                              {li.item?.name}{' '}
-                              <span className="text-slate-400 font-mono">({li.item?.sku})</span>
-                            </td>
-                            <td className="py-2">
-                              {li.requestedQty} {li.item?.unit}
-                            </td>
-                            <td className="py-2">
-                              {li.approvedQty} {li.item?.unit}
-                            </td>
-                            <td className="py-2 font-semibold text-sky-700">
-                              {li.issuedQty} {li.item?.unit}
-                            </td>
-                            <td className="py-2">
-                              <span
-                                className={`font-semibold ${
-                                  avail >= li.requestedQty ? 'text-emerald-700' : 'text-rose-600'
-                                }`}
-                              >
-                                {avail} {li.item?.unit}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                <div className="mt-3 p-4 rounded-2xl bg-white/60 border border-white/80 space-y-3">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                    Line Item Breakdown
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-200/60 text-slate-500">
+                          <th className="py-2 px-2">Item</th>
+                          <th className="py-2 px-2">Requested</th>
+                          <th className="py-2 px-2">Approved</th>
+                          <th className="py-2 px-2">Issued</th>
+                          <th className="py-2 px-2">Available in Store</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {reqItem.items.map((li: any) => {
+                          const catalogItem = items.find((i) => i.id === li.itemId);
+                          return (
+                            <tr key={li.id}>
+                              <td className="py-2 px-2 font-medium text-slate-900">
+                                {li.item?.name}
+                              </td>
+                              <td className="py-2 px-2 font-semibold">{li.requestedQty}</td>
+                              <td className="py-2 px-2 text-sky-700 font-semibold">
+                                {li.approvedQty ?? '—'}
+                              </td>
+                              <td className="py-2 px-2 text-emerald-700 font-semibold">
+                                {li.issuedQty}
+                              </td>
+                              <td className="py-2 px-2">
+                                <span
+                                  className={`font-semibold ${
+                                    (catalogItem?.totalStock ?? 0) < li.requestedQty
+                                      ? 'text-amber-600'
+                                      : 'text-slate-800'
+                                  }`}
+                                >
+                                  {catalogItem?.totalStock ?? 0} {catalogItem?.unit}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>
@@ -426,68 +441,75 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
         )}
       </div>
 
-      {/* New Request Modal */}
+      {/* Glassmorphic New Request Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900">Submit Supply Request</h3>
-              <button onClick={() => setShowNewModal(false)} className="text-slate-400 hover:text-slate-600">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-modal rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-4">
+            <div className="flex items-center justify-between border-b border-white/60 pb-3">
+              <h3 className="text-base font-bold text-slate-900">
+                New Housekeeping Supply Request
+              </h3>
+              <button onClick={() => setShowNewModal(false)} className="text-slate-400 hover:text-slate-700">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleCreateRequest} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Target Ward / Hospital Area
-                </label>
-                <input
-                  required
-                  value={targetArea}
-                  onChange={(e) => setTargetArea(e.target.value)}
-                  placeholder="e.g., ICU Ward 3, OPD Surgical Unit"
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
-                />
-              </div>
+
+            <form onSubmit={handleCreateRequest} className="space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Purpose</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Target Hospital Area *
+                  </label>
                   <input
+                    type="text"
                     required
-                    value={purpose}
-                    onChange={(e) => setPurpose(e.target.value)}
-                    placeholder="Daily disinfection"
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                    placeholder="e.g. Ward 3B, ICU, OPD"
+                    value={targetArea}
+                    onChange={(e) => setTargetArea(e.target.value)}
+                    className="glass-input w-full px-3 py-2 text-xs rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Urgency</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Urgency *</label>
                   <select
                     value={urgency}
-                    onChange={(e) => setUrgency(e.target.value as 'NORMAL' | 'URGENT')}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                    onChange={(e) => setUrgency(e.target.value as any)}
+                    className="glass-input w-full px-3 py-2 text-xs rounded-xl"
                   >
                     <option value="NORMAL">Normal</option>
-                    <option value="URGENT">Urgent</option>
+                    <option value="URGENT">Urgent (Priority IPC)</option>
                   </select>
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Purpose / Reason *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Daily ward sanitization & replenishment"
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                  className="glass-input w-full px-3 py-2 text-xs rounded-xl"
+                />
+              </div>
+
+              <div className="space-y-2 pt-2 border-t border-white/60">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-700">Requested Items</label>
+                  <span className="text-xs font-bold text-slate-700">Requested Items</span>
                   <button
                     type="button"
                     onClick={() =>
                       setLineItems([...lineItems, { itemId: items[0]?.id || '', requestedQty: 1 }])
                     }
-                    className="text-xs font-semibold text-sky-700 hover:underline"
+                    className="text-xs text-sky-700 font-bold hover:underline"
                   >
-                    + Add Line
+                    + Add Item
                   </button>
                 </div>
+
                 {lineItems.map((line, idx) => (
-                  <div key={idx} className="flex gap-2 items-center">
+                  <div key={idx} className="flex items-center gap-2">
                     <select
                       value={line.itemId}
                       onChange={(e) => {
@@ -495,7 +517,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                         copy[idx].itemId = e.target.value;
                         setLineItems(copy);
                       }}
-                      className="flex-1 px-2.5 py-2 text-xs border border-slate-300 rounded-lg"
+                      className="glass-input flex-1 px-3 py-2 text-xs rounded-xl"
                     >
                       {items.map((it) => (
                         <option key={it.id} value={it.id}>
@@ -512,13 +534,13 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                         copy[idx].requestedQty = Number(e.target.value);
                         setLineItems(copy);
                       }}
-                      className="w-20 px-2.5 py-2 text-xs border border-slate-300 rounded-lg"
+                      className="glass-input w-20 px-2.5 py-2 text-xs rounded-xl font-bold"
                     />
                     {lineItems.length > 1 && (
                       <button
                         type="button"
                         onClick={() => setLineItems(lineItems.filter((_, i) => i !== idx))}
-                        className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"
+                        className="p-1.5 text-rose-500 hover:bg-rose-500/15 rounded-xl transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -527,18 +549,18 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                 ))}
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-3 border-t border-white/60">
                 <button
                   type="button"
                   onClick={() => setShowNewModal(false)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 glass-pill hover:bg-white rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isBusy}
-                  className="px-4 py-2 text-xs font-semibold bg-sky-700 hover:bg-sky-800 text-white rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-600/20"
                 >
                   {isBusy ? 'Submitting...' : 'Submit Request'}
                 </button>
@@ -548,12 +570,12 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
         </div>
       )}
 
-      {/* Partial Approve Modal */}
+      {/* Glassmorphic Partial Approve Modal */}
       {partialTarget && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-modal rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <h3 className="text-base font-bold text-slate-900">
-              Partial Approval — {partialTarget.requestCode}
+              Partial Approval — Request #{partialTarget.requestCode.replace(/^REQ-/, '')}
             </h3>
             <form
               onSubmit={async (e) => {
@@ -580,10 +602,10 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
               className="space-y-3"
             >
               {partialTarget.items.map((li) => (
-                <div key={li.id} className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <div key={li.id} className="flex items-center justify-between gap-3 p-3 rounded-2xl glass-pill">
                   <div className="text-xs">
-                    <div className="font-semibold text-slate-900">{li.item?.name}</div>
-                    <div className="text-slate-500">Requested: {li.requestedQty} {li.item?.unit}</div>
+                    <div className="font-bold text-slate-900">{li.item?.name}</div>
+                    <div className="text-slate-500 font-medium">Requested: {li.requestedQty} {li.item?.unit}</div>
                   </div>
                   <input
                     type="number"
@@ -593,22 +615,22 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                     onChange={(e) =>
                       setPartialQtys({ ...partialQtys, [li.id]: Number(e.target.value) })
                     }
-                    className="w-20 px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg bg-white font-semibold"
+                    className="glass-input w-20 px-2.5 py-1.5 text-xs rounded-xl font-bold"
                   />
                 </div>
               ))}
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-3 border-t border-white/60">
                 <button
                   type="button"
                   onClick={() => setPartialTarget(null)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 glass-pill hover:bg-white rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isBusy}
-                  className="px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md"
                 >
                   Confirm Approval
                 </button>
@@ -618,17 +640,17 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
         </div>
       )}
 
-      {/* Reject Reason Modal */}
+      {/* Glassmorphic Reject Reason Modal */}
       {rejectTarget && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-modal rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <h3 className="text-base font-bold text-slate-900">
-              Reject Request {rejectTarget.requestCode}
+              Reject Request #{rejectTarget.requestCode.replace(/^REQ-/, '')}
             </h3>
             <form onSubmit={handleRejectSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Mandatory Rejection Reason (FR-3.3)
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Reason for Rejection *
                 </label>
                 <textarea
                   required
@@ -636,21 +658,21 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="Provide reason for rejection..."
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                  className="glass-input w-full px-3 py-2 text-sm rounded-xl"
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2 pt-2 border-t border-white/60">
                 <button
                   type="button"
                   onClick={() => setRejectTarget(null)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 glass-pill hover:bg-white rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isBusy}
-                  className="px-4 py-2 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-md"
                 >
                   Confirm Rejection
                 </button>
@@ -660,20 +682,20 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
         </div>
       )}
 
-      {/* FEFO Issue Modal */}
+      {/* Glassmorphic FEFO Issue Modal */}
       {issueTarget && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-xl w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-modal rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-white/60 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
-                  FEFO Stock Issuance — {issueTarget.requestCode}
+                  Stock Issuance — Request #{issueTarget.requestCode.replace(/^REQ-/, '')}
                 </h3>
-                <p className="text-xs text-slate-500">
-                  Earliest-expiring active batches are automatically selected first (FR-5.3).
+                <p className="text-xs text-slate-500 font-medium">
+                  Earliest-expiring active batches are automatically prioritized.
                 </p>
               </div>
-              <button onClick={() => setIssueTarget(null)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setIssueTarget(null)} className="text-slate-400 hover:text-slate-700">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -687,11 +709,11 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                 const maxRemaining = li.approvedQty - li.issuedQty;
 
                 return (
-                  <div key={li.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50 space-y-2">
+                  <div key={li.id} className="p-3.5 rounded-2xl glass-card space-y-2">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-xs font-bold text-slate-900">{li.item?.name}</div>
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-[11px] text-slate-500 font-medium">
                           Remaining Approved: {maxRemaining} {li.item?.unit} &bull; Store Stock:{' '}
                           {catalogItem?.totalStock ?? 0}
                         </div>
@@ -707,12 +729,12 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                             [li.id]: Number(e.target.value),
                           })
                         }
-                        className="w-24 px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg bg-white font-semibold"
+                        className="glass-input w-24 px-2.5 py-1.5 text-xs rounded-xl font-bold"
                       />
                     </div>
                     {fefoBatch ? (
-                      <div className="text-[11px] text-sky-800 bg-sky-50 border border-sky-200 px-2 py-1 rounded flex items-center gap-1.5">
-                        <Clock className="w-3 h-3" />
+                      <div className="text-[11px] text-sky-900 bg-sky-500/15 border border-sky-400/30 px-2.5 py-1 rounded-xl flex items-center gap-1.5 font-medium">
+                        <Clock className="w-3.5 h-3.5 text-sky-700 shrink-0" />
                         <span>
                           <strong>Recommended (FEFO):</strong> Batch {fefoBatch.batchNumber} (Qty:{' '}
                           {fefoBatch.remainingQty}
@@ -723,7 +745,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                         </span>
                       </div>
                     ) : (
-                      <div className="text-[11px] text-rose-700 font-medium">
+                      <div className="text-[11px] text-rose-700 font-semibold px-2">
                         No active non-expired batches available in store.
                       </div>
                     )}
@@ -731,18 +753,18 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
                 );
               })}
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-3 border-t border-white/60">
                 <button
                   type="button"
                   onClick={() => setIssueTarget(null)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 glass-pill hover:bg-white rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isBusy}
-                  className="px-4 py-2 text-xs font-semibold bg-sky-700 hover:bg-sky-800 text-white rounded-lg"
+                  className="px-4 py-2 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-600/20"
                 >
                   {isBusy ? 'Issuing...' : 'Confirm FEFO Issue'}
                 </button>
