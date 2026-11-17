@@ -1,0 +1,13 @@
+{
+  "name": "shsms-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart Housekeeping Supply Management System (SHSMS) for Hemas Hospital, Thalawathugoda",
+  "scripts": {
+    "seed": "cd backend && npm run seed",
+    "test:auth": "cd backend && npx tsx src/test_auth.ts",
+    "backend:dev": "cd backend && npm run dev",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build"
+  }
+}

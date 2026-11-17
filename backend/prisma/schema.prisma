@@ -1,0 +1,214 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  fullName     String
+  email        String   @unique
+  passwordHash String
+  role         String   // HOUSEKEEPING_SUPERVISOR, MANAGER, STORES_STAFF, PROCUREMENT_STAFF, ADMIN
+  department   String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  submittedRequests    SupplyRequest[]        @relation("RequestedByUser")
+  reviewedRequests     SupplyRequest[]        @relation("ReviewedByUser")
+  createdPOs           PurchaseOrder[]        @relation("CreatedByUser")
+  verifiedDeliveries   DeliveryVerification[] @relation("VerifiedByUser")
+  ledgerEntries        StockLedger[]          @relation("PerformedByUser")
+  auditLogs            AuditLog[]             @relation("AuditActor")
+
+  @@map("users")
+}
+
+model Item {
+  id              String   @id @default(uuid())
+  sku             String   @unique // e.g., HEM-CHM-001
+  name            String
+  description     String?
+  category        String   // CHEMICAL, EQUIPMENT, CONSUMABLE, PPE
+  unit            String   // Liters, Bottles, Boxes, Pairs, Units, Packs
+  storageLocation String   // e.g., Main Store Rack A2, Chemical Room B1
+  minStockLevel   Int      // Safety floor
+  reorderPoint    Int      // Triggers LOW_STOCK when total available <= reorderPoint
+  tracksExpiry    Boolean  @default(false)
+  qrCodeValue     String   @unique // e.g., SHSMS:ITEM:HEM-CHM-001
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  batches              StockBatch[]
+  requestItems         RequestItem[]
+  poItems              PurchaseOrderItem[]
+  deliveryVerifications DeliveryVerification[]
+  ledgerEntries        StockLedger[]
+  alerts               Alert[]
+
+  @@map("items")
+}
+
+model StockBatch {
+  id           String    @id @default(uuid())
+  itemId       String
+  item         Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  batchNumber  String
+  initialQty   Int
+  remainingQty Int
+  expiryDate   DateTime?
+  receivedDate DateTime  @default(now())
+  poId         String?
+  purchaseOrder PurchaseOrder? @relation(fields: [poId], references: [id], onDelete: SetNull)
+  status       String    @default("ACTIVE") // ACTIVE, EXPIRING_SOON, EXPIRED, DEPLETED
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  ledgerEntries StockLedger[]
+
+  @@index([itemId, expiryDate, status])
+  @@index([batchNumber])
+  @@map("stock_batches")
+}
+
+model SupplyRequest {
+  id              String        @id @default(uuid())
+  requestCode     String        @unique // e.g., REQ-202611-001
+  requestedById   String
+  requestedBy     User          @relation("RequestedByUser", fields: [requestedById], references: [id])
+  targetArea      String        // Hospital area, e.g. "ICU Ward 3", "OPD Surgical Unit"
+  purpose         String
+  urgency         String        @default("NORMAL") // NORMAL, URGENT
+  status          String        @default("PENDING") // PENDING, APPROVED, REJECTED, PARTIALLY_ISSUED, FULFILLED, CANCELLED
+  reviewedById    String?
+  reviewedBy      User?         @relation("ReviewedByUser", fields: [reviewedById], references: [id])
+  reviewedAt      DateTime?
+  rejectionReason String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  items RequestItem[]
+
+  @@map("supply_requests")
+}
+
+model RequestItem {
+  id           String        @id @default(uuid())
+  requestId    String
+  request      SupplyRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  itemId       String
+  item         Item          @relation(fields: [itemId], references: [id])
+  requestedQty Int
+  approvedQty  Int           @default(0)
+  issuedQty    Int           @default(0)
+
+  @@map("request_items")
+}
+
+model PurchaseOrder {
+  id           String    @id @default(uuid())
+  poNumber     String    @unique // e.g., PO-2026-001
+  supplierName String
+  createdById  String
+  createdBy    User      @relation("CreatedByUser", fields: [createdById], references: [id])
+  expectedDate DateTime?
+  status       String    @default("OPEN") // OPEN, PARTIALLY_RECEIVED, VERIFIED, DISCREPANCY_FLAGGED
+  totalCost    Float?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  items        PurchaseOrderItem[]
+  deliveries   DeliveryVerification[]
+  batches      StockBatch[]
+
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id          String        @id @default(uuid())
+  poId        String
+  po          PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+  itemId      String
+  item        Item          @relation(fields: [itemId], references: [id])
+  orderedQty  Int
+  receivedQty Int           @default(0)
+  unitPrice   Float?
+
+  @@map("po_items")
+}
+
+model DeliveryVerification {
+  id              String        @id @default(uuid())
+  poId            String
+  purchaseOrder   PurchaseOrder @relation(fields: [poId], references: [id])
+  itemId          String
+  item            Item          @relation(fields: [itemId], references: [id])
+  verifiedById    String
+  verifiedBy      User          @relation("VerifiedByUser", fields: [verifiedById], references: [id])
+  receivedQty     Int
+  acceptedQty     Int           @default(0) // Good units received and added to inventory
+  condition       String        // GOOD, DAMAGED, DEFECTIVE, WRONG_ITEM
+  batchNumber     String?
+  expiryDate      DateTime?
+  discrepancyNote String?
+  verifiedAt      DateTime      @default(now())
+
+  @@map("delivery_verifications")
+}
+
+model StockLedger {
+  id             String      @id @default(uuid())
+  itemId         String
+  item           Item        @relation(fields: [itemId], references: [id])
+  batchId        String?
+  batch          StockBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  movementType   String      // RECEIPT, ISSUE, WASTAGE, ADJUSTMENT
+  quantityChange Int         // +ve for receipt, -ve for issue/wastage
+  balanceAfter   Int
+  referenceType  String?     // SUPPLY_REQUEST, PURCHASE_ORDER, EXPIRY_DISPOSAL, INITIAL_STOCK, MANUAL_ADJUSTMENT
+  referenceId    String?
+  performedById  String
+  performedBy    User        @relation("PerformedByUser", fields: [performedById], references: [id])
+  notes          String?
+  createdAt      DateTime    @default(now())
+
+  @@map("stock_ledger")
+}
+
+model Alert {
+  id            String    @id @default(uuid())
+  alertType     String    // LOW_STOCK, EXPIRY_WARNING, EXPIRED, DISCREPANCY, APPROVAL_NEEDED
+  targetRole    String    // ALL, HOUSEKEEPING_SUPERVISOR, MANAGER, STORES_STAFF, PROCUREMENT_STAFF, ADMIN
+  itemId        String?
+  item          Item?     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  referenceId   String?
+  referenceType String?
+  message       String
+  severity      String    @default("WARNING") // INFO, WARNING, CRITICAL
+  isResolved    Boolean   @default(false)
+  resolvedAt    DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@map("alerts")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String
+  actor      User     @relation("AuditActor", fields: [actorId], references: [id])
+  action     String   // CREATE_ITEM, UPDATE_ITEM, RECEIVE_STOCK, ISSUE_STOCK, ADJUST_STOCK, DISPOSE_BATCH, SUBMIT_REQUEST, APPROVE_REQUEST, REJECT_REQUEST, CANCEL_REQUEST, CREATE_PO, VERIFY_DELIVERY
+  entityType String   // ITEM, STOCK_BATCH, SUPPLY_REQUEST, PURCHASE_ORDER, DELIVERY_VERIFICATION
+  entityId   String
+  beforeData String?  // JSON snapshot before change
+  afterData  String?  // JSON snapshot after change
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
