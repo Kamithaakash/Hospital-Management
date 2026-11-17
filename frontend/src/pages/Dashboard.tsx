@@ -190,7 +190,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
 
           <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-white/60">
+            <div className="flex items-center justify-between pb-3.5 border-b border-white/30">
               <div>
                 <h2 className="text-sm font-bold text-slate-900">
                   {user?.role === 'MANAGER'
@@ -216,10 +216,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </button>
             </div>
 
-            <div className="divide-y divide-white/40 mt-2">
+            <div className="divide-y divide-white/20 mt-2">
               {user?.role === 'PROCUREMENT_STAFF' ? (
                 purchaseOrders.slice(0, 4).map((po) => (
-                  <div key={po.id} className="py-3 flex items-center justify-between gap-3 hover:bg-white/40 px-2 rounded-xl transition-colors">
+                  <div key={po.id} className="py-3 flex items-center justify-between gap-3 hover:bg-white/20 px-2 rounded-xl transition-colors">
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-bold text-xs text-slate-900">
@@ -243,7 +243,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 ))
               ) : (
                 requests.slice(0, 4).map((req) => (
-                  <div key={req.id} className="py-3 flex items-center justify-between gap-3 hover:bg-white/40 px-2 rounded-xl transition-colors">
+                  <div key={req.id} className="py-3 flex items-center justify-between gap-3 hover:bg-white/20 px-2 rounded-xl transition-colors">
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-xs text-slate-900">
@@ -301,7 +301,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
 
           <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-white/60">
+            <div className="flex items-center justify-between pb-3.5 border-b border-white/30">
               <div>
                 <h2 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
                   <ShieldAlert className="w-4 h-4 text-amber-600" />
@@ -320,9 +320,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </button>
             </div>
 
-            <div className="divide-y divide-white/40 mt-2">
+            <div className="divide-y divide-white/20 mt-2">
               {watchlistItems.slice(0, 5).map((item) => (
-                <div key={item.id} className="py-2.5 flex items-center justify-between gap-3 hover:bg-white/40 px-2 rounded-xl transition-colors">
+                <div key={item.id} className="py-2.5 flex items-center justify-between gap-3 hover:bg-white/20 px-2 rounded-xl transition-colors">
                   <div className="min-w-0">
                     <div className="font-semibold text-xs text-slate-900 truncate">
                       {item.name}{' '}

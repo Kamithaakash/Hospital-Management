@@ -173,7 +173,7 @@ export const ReportsPage: React.FC = () => {
       <div className="glass-card rounded-3xl overflow-hidden relative shadow-xs">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
 
-        <div className="p-4 border-b border-white/60 flex items-center justify-between">
+        <div className="p-4 border-b border-white/30 flex items-center justify-between">
           <div className="text-sm font-bold text-slate-900">
             Hemas Hospital Thalawathugoda &bull;{' '}
             {reportTabs.find((t) => t.id === activeReport)?.label}
@@ -192,7 +192,7 @@ export const ReportsPage: React.FC = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-100/50 backdrop-blur-md border-b border-white/60 text-slate-600 uppercase text-[11px]">
+              <thead className="bg-slate-100/50 backdrop-blur-md border-b border-white/30 text-slate-600 uppercase text-[11px]">
                 <tr>
                   {columns.map((col) => (
                     <th key={col} className="px-4 py-3 font-bold whitespace-nowrap">

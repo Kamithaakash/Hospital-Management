@@ -63,12 +63,12 @@ export const Login: React.FC = () => {
       {/* Background with Responsive Positioning */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <img
-          src="/images/hemas-bg.png"
-          alt="Hemas Background"
+          src="/images/HEMAS Healthcare Tech Background.png"
+          alt="HEMAS Healthcare Tech Background"
           className="w-full h-full object-cover object-right sm:object-center select-none"
         />
         {/* Balanced backdrop layer so the artwork is visible while card glass pops */}
-        <div className="absolute inset-0 bg-slate-950/30 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[0.5px]" />
       </div>
 
       {/* Header Logo */}

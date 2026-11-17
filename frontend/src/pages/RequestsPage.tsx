@@ -256,7 +256,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
             >
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
 
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/60 pb-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/30 pb-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-bold text-sm text-slate-900">
@@ -445,7 +445,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
       {showNewModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
           <div className="glass-modal rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-4">
-            <div className="flex items-center justify-between border-b border-white/60 pb-3">
+            <div className="flex items-center justify-between border-b border-white/30 pb-3">
               <h3 className="text-base font-bold text-slate-900">
                 New Housekeeping Supply Request
               </h3>
@@ -686,7 +686,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
       {issueTarget && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
           <div className="glass-modal rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-white/60 pb-3">
+            <div className="flex items-center justify-between border-b border-white/30 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
                   Stock Issuance — Request #{issueTarget.requestCode.replace(/^REQ-/, '')}

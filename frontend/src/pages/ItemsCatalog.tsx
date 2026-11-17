@@ -151,7 +151,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-100/50 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-slate-600 border-b border-white/60">
+              <tr className="bg-white/20 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-slate-700 border-b border-white/40">
                 <th className="py-3 px-4 w-10"></th>
                 <th className="py-3 px-4">Item SKU & Name</th>
                 <th className="py-3 px-4">Category</th>
@@ -162,7 +162,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                 <th className="py-3 px-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/40 text-sm">
+            <tbody className="divide-y divide-white/30 text-sm">
               {filteredItems.map((item) => {
                 const isExpanded = expandedItemId === item.id;
                 return (
