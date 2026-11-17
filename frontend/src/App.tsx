@@ -72,14 +72,14 @@ function MainLayout() {
 
   return (
     <div className="min-h-screen flex flex-col relative isolate text-slate-900 selection:bg-sky-500 selection:text-white">
-      {/* Fixed Still Background - Pastel Network Glow Background */}
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+      {/* Fixed Still Background - Pastel Network Glow Background with Smooth Resize */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden w-full h-[100dvh]">
         <img
           src="/images/pastel-bg.png"
           alt="Pastel Network Glow Background"
-          className="w-full h-full object-cover object-center select-none"
+          className="w-full h-full object-cover object-center select-none transition-all duration-500 ease-out will-change-transform"
         />
-        {/* Balanced subtle veil for high readability while letting pastel glow refract through glassmorphism blocks */}
+        {/* Balanced subtle veil for high readability while letting pastel glow refract through sharp glassmorphism blocks */}
         <div className="absolute inset-0 bg-slate-900/5 backdrop-blur-[0.2px]" />
       </div>
 
@@ -90,7 +90,7 @@ function MainLayout() {
         onOpenQRScanner={() => setIsQRScannerOpen(true)}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         <AlertBanner alerts={alerts} onAlertResolved={fetchAppData} />
 
         {currentTab === 'dashboard' && (

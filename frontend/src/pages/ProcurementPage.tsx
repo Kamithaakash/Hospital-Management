@@ -217,17 +217,17 @@ export const ProcurementPage: React.FC<ProcurementPageProps> = ({
       )}
 
       {/* Glassmorphic Filter Bar */}
-      <div className="flex flex-wrap gap-1.5 glass-card p-3 rounded-2xl relative overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+      <div className="flex items-center gap-1.5 glass-card p-2.5 sm:p-3 rounded-2xl relative overflow-hidden overflow-x-auto no-scrollbar">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
         {['ALL', 'OPEN', 'PARTIALLY_RECEIVED', 'DISCREPANCY_FLAGGED', 'VERIFIED'].map((st) => (
           <button
             key={st}
             onClick={() => setStatusFilter(st)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all ${
+            className={`px-3 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all active:scale-95 ${
               statusFilter === st
                 ? 'bg-slate-900 text-white shadow-xs'
-                : 'glass-pill text-slate-700 hover:bg-white'
+                : 'glass-pill text-slate-800 hover:bg-white/90'
             }`}
           >
             {st.replace('_', ' ')}
@@ -238,15 +238,15 @@ export const ProcurementPage: React.FC<ProcurementPageProps> = ({
       {/* PO Cards */}
       <div className="space-y-4">
         {filteredPOs.length === 0 ? (
-          <div className="glass-card rounded-3xl p-10 text-center text-sm text-slate-500 font-medium">
+          <div className="glass-card rounded-2xl sm:rounded-3xl p-8 sm:p-10 text-center text-sm text-slate-600 font-semibold">
             No purchase orders found.
           </div>
         ) : (
           filteredPOs.map((po) => (
-            <div key={po.id} className="glass-card rounded-3xl p-6 relative overflow-hidden space-y-4 shadow-xs">
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+            <div key={po.id} className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden space-y-3 sm:space-y-4 shadow-xs">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/60 pb-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/30 pb-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <Truck className="w-4 h-4 text-sky-700" />
@@ -357,7 +357,7 @@ export const ProcurementPage: React.FC<ProcurementPageProps> = ({
       {showNewPOModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
           <div className="glass-modal rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-4">
-            <div className="flex items-center justify-between border-b border-white/60 pb-3">
+            <div className="flex items-center justify-between border-b border-white/30 pb-3">
               <h3 className="text-base font-bold text-slate-900">Create Purchase Order</h3>
               <button onClick={() => setShowNewPOModal(false)} className="text-slate-400 hover:text-slate-700">
                 <X className="w-5 h-5" />
@@ -479,7 +479,7 @@ export const ProcurementPage: React.FC<ProcurementPageProps> = ({
       {inspectPO && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="glass-modal rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative space-y-4 my-8">
-            <div className="flex items-center justify-between border-b border-white/60 pb-3">
+            <div className="flex items-center justify-between border-b border-white/30 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
                   Delivery Inspection — {inspectPO.poNumber}

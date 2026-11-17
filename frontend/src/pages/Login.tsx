@@ -60,15 +60,15 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen relative flex flex-col justify-center py-8 px-4 sm:px-6 lg:px-8">
-      {/* Background with Responsive Positioning */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+      {/* Background with Responsive Dynamic Viewport & Smooth Resize */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none w-full h-[100dvh]">
         <img
-          src="/images/hemas-bg.png"
-          alt="Hemas Background"
-          className="w-full h-full object-cover object-right sm:object-center select-none"
+          src="/images/HEMAS Healthcare Tech Background.png"
+          alt="HEMAS Healthcare Tech Background"
+          className="w-full h-full object-cover object-center select-none transition-all duration-500 ease-out will-change-transform"
         />
         {/* Balanced backdrop layer so the artwork is visible while card glass pops */}
-        <div className="absolute inset-0 bg-slate-950/30 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[0.5px]" />
       </div>
 
       {/* Header Logo */}
@@ -77,19 +77,19 @@ export const Login: React.FC = () => {
           <img
             src="/images/hemas-logo.png"
             alt="Hemas Hospitals"
-            className="h-20 sm:h-24 w-auto object-contain select-none drop-shadow-lg"
+            className="h-16 sm:h-24 w-auto object-contain select-none drop-shadow-lg transition-all"
           />
         </div>
-        <p className="text-xs sm:text-sm font-medium text-white/90 drop-shadow-sm">
+        <p className="text-xs sm:text-sm font-medium text-white/95 drop-shadow-sm px-2">
           Smart Housekeeping Supply Management • Thalawathugoda
         </p>
       </div>
 
-      {/* Glassmorphism Card */}
+      {/* Sharp Focused Glassmorphism Card */}
       <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="relative rounded-3xl p-6 sm:p-8 bg-white/20 sm:bg-white/25 backdrop-blur-2xl border border-white/40 shadow-[0_16px_48px_0_rgba(0,0,0,0.3)] ring-1 ring-white/30 overflow-hidden">
+        <div className="relative rounded-3xl p-5 sm:p-8 bg-white/35 sm:bg-white/40 backdrop-blur-3xl border border-white/60 shadow-[0_20px_50px_0_rgba(0,0,0,0.35)] ring-1 ring-white/40 overflow-hidden">
           {/* Glass specular top highlight */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent pointer-events-none" />
 
           <h2 className="text-xl font-bold text-slate-900 tracking-tight drop-shadow-2xs">
             Staff Sign In

@@ -40,24 +40,26 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="glass-header sticky top-0 z-30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+    <header className="glass-header sticky top-0 z-30 transition-all">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-14 sm:h-16 items-center gap-2">
           {/* Logo & Hospital Brand */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <img
               src="/images/icon.png"
               alt="Hemas Hospital Logo"
-              className="w-10 h-10 object-contain rounded-xl shadow-xs border border-white/60 bg-white/50 p-0.5"
+              className="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-xl shadow-xs border border-white/80 bg-white/70 p-0.5 shrink-0"
             />
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-slate-900 tracking-tight text-base">Hemas Hospital</span>
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-800 border border-sky-400/20 backdrop-blur-xs">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-extrabold text-slate-900 tracking-tight text-sm sm:text-base truncate">
+                  Hemas Hospital
+                </span>
+                <span className="hidden xs:inline-block text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-900 border border-sky-400/30">
                   Housekeeping
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium">Thalawathugoda</p>
+              <p className="text-[11px] text-slate-600 font-medium truncate">Thalawathugoda</p>
             </div>
           </div>
 
@@ -150,7 +152,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
 
               {showAlertMenu && (
-                <div className="absolute right-0 mt-2 w-80 glass-modal rounded-2xl shadow-xl py-2 z-50">
+                <div className="absolute right-[-10px] sm:right-0 mt-2 w-[calc(100vw-24px)] sm:w-80 max-w-sm glass-modal rounded-2xl shadow-xl py-2 z-50">
                   <div className="px-4 py-2 border-b border-white/60 flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800">
                       Notifications ({alerts.length})
@@ -193,7 +195,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="relative">
               <button
                 onClick={() => setShowRoleMenu(!showRoleMenu)}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl glass-pill hover:bg-white/90 text-slate-700 text-xs transition-all shadow-2xs"
+                className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1.5 rounded-xl glass-pill hover:bg-white/90 text-slate-800 text-xs transition-all shadow-2xs"
               >
                 <div className="w-6 h-6 rounded-lg bg-sky-700 text-white flex items-center justify-center font-bold text-xs shadow-xs">
                   {user?.fullName.charAt(0)}
@@ -208,7 +210,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
 
               {showRoleMenu && (
-                <div className="absolute right-0 mt-2 w-64 glass-modal rounded-2xl shadow-xl py-1.5 z-50">
+                <div className="absolute right-[-10px] sm:right-0 mt-2 w-[calc(100vw-24px)] sm:w-64 max-w-xs glass-modal rounded-2xl shadow-xl py-1.5 z-50">
                   <div className="px-3 py-1.5 border-b border-white/60">
                     <span className="text-[11px] font-bold text-slate-600">
                       Switch Staff Account
@@ -243,7 +245,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Logout */}
             <button
               onClick={logout}
-              className="p-2 text-slate-500 hover:text-slate-900 glass-pill hover:bg-rose-50/70 hover:text-rose-700 rounded-xl transition-all"
+              className="p-2 text-slate-600 hover:text-slate-900 glass-pill hover:bg-rose-50/70 hover:text-rose-700 rounded-xl transition-all"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
@@ -251,32 +253,37 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Mobile / Tablet Navigation */}
-        <nav className="md:hidden border-t border-white/40 py-2 flex items-center gap-1.5 overflow-x-auto">
+        {/* Mobile / Tablet Touch-Friendly Navigation */}
+        <nav className="md:hidden border-t border-white/50 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {[
-            { id: 'dashboard', label: 'Dashboard' },
-            { id: 'items', label: 'Inventory' },
-            { id: 'requests', label: 'Requests' },
-            { id: 'procurement', label: 'Purchase Orders' },
-            { id: 'reports', label: 'Reports' },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => onTabChange(t.id)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl whitespace-nowrap transition-all ${
-                currentTab === t.id
-                  ? 'bg-sky-600 text-white shadow-xs'
-                  : 'glass-pill text-slate-700 hover:bg-white'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+            { id: 'dashboard', label: 'Dashboard', icon: Layers },
+            { id: 'items', label: 'Inventory', icon: ClipboardList },
+            { id: 'requests', label: 'Requests', icon: FileText },
+            { id: 'procurement', label: 'POs', icon: Truck },
+            { id: 'reports', label: 'Reports', icon: BarChart3 },
+          ].map((t) => {
+            const Icon = t.icon;
+            const isActive = currentTab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => onTabChange(t.id)}
+                className={`px-3 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all flex items-center gap-1.5 active:scale-95 ${
+                  isActive
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'glass-pill text-slate-700 hover:bg-white/90'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{t.label}</span>
+              </button>
+            );
+          })}
           <button
             onClick={onOpenQRScanner}
-            className="px-3 py-1.5 text-xs font-semibold rounded-xl whitespace-nowrap glass-pill text-sky-800 hover:bg-sky-50 flex items-center gap-1"
+            className="px-3 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap glass-pill text-sky-900 hover:bg-sky-50 flex items-center gap-1.5 active:scale-95 shadow-xs"
           >
-            <QrCode className="w-3.5 h-3.5" />
+            <QrCode className="w-3.5 h-3.5 text-sky-700" />
             <span>Scan QR</span>
           </button>
         </nav>
