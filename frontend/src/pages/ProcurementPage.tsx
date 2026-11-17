@@ -175,7 +175,7 @@ export const ProcurementPage: React.FC<ProcurementPageProps> = ({
             <span>Purchase Orders & Delivery Verification</span>
           </h2>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Create supplier POs (FR-4.1) and inspect incoming deliveries against POs (FR-4.2 – FR-4.4).
+            Create supplier purchase orders and inspect incoming deliveries.
           </p>
         </div>
 
@@ -485,8 +485,8 @@ export const ProcurementPage: React.FC<ProcurementPageProps> = ({
                   Delivery Inspection — {inspectPO.poNumber}
                 </h3>
                 <p className="text-xs text-slate-500 font-medium">
-                  Only GOOD condition units are added to usable stock (FR-4.4). Shortages or damages
-                  trigger alerts to Procurement & Management (FR-4.3).
+                  Only verified units in good condition are added to usable stock. Shortages or damages
+                  trigger automatic discrepancy alerts to Procurement & Management.
                 </p>
               </div>
               <button onClick={() => setInspectPO(null)} className="text-slate-400 hover:text-slate-700">

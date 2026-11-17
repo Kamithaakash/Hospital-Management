@@ -156,7 +156,7 @@ export async function deductStockFEFO(tx: TxClient, params: DeductFEFOParams) {
     }
     if (chosen.status === 'EXPIRED' || (chosen.expiryDate && chosen.expiryDate < today)) {
       throw Object.assign(
-        new Error(`Batch ${chosen.batchNumber} is EXPIRED and blocked from issuance (FR-5.4).`),
+        new Error(`Batch ${chosen.batchNumber} is expired and quarantined from issuance.`),
         { statusCode: 400 }
       );
     }

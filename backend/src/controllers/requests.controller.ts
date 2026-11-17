@@ -187,7 +187,7 @@ export async function reviewRequest(req: AuthenticatedRequest, res: Response) {
     if (decision === 'REJECT' && (!rejectionReason || !String(rejectionReason).trim())) {
       return res.status(400).json({
         success: false,
-        message: 'A rejection reason is mandatory when rejecting a request (FR-3.3).',
+        message: 'A rejection reason is mandatory when rejecting a request.',
       });
     }
 

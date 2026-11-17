@@ -98,7 +98,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             className="px-3.5 py-2 rounded-xl glass-pill hover:bg-amber-500/15 text-amber-900 border-amber-400/30 font-semibold text-xs flex items-center gap-1.5 shadow-2xs active:scale-[0.98] transition-all"
           >
             <Truck className="w-3.5 h-3.5 text-amber-700" />
-            <span>POs ({openPOs.length})</span>
+            <span>Purchase Orders ({openPOs.length})</span>
           </button>
           <button
             onClick={() => onNavigateTab('reports')}
@@ -178,7 +178,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             {pendingRequests.length + approvedRequests.length + openPOs.length}
           </div>
           <div className="text-[11px] text-slate-400 font-medium mt-1">
-            {pendingRequests.length} pending &bull; {approvedRequests.length} to issue &bull; {openPOs.length} POs
+            {pendingRequests.length} pending &bull; {approvedRequests.length} to issue &bull; {openPOs.length} purchase orders
           </div>
         </button>
       </div>
@@ -196,7 +196,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   {user?.role === 'MANAGER'
                     ? 'Requests Awaiting Approval'
                     : user?.role === 'STORES_STAFF'
-                    ? 'Ready for FEFO Issue & PO Verification'
+                    ? 'Ready for Stock Issue & Delivery Verification'
                     : user?.role === 'PROCUREMENT_STAFF'
                     ? 'Active Purchase Orders'
                     : 'Recent Supply Requests'}
@@ -246,8 +246,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <div key={req.id} className="py-3 flex items-center justify-between gap-3 hover:bg-white/40 px-2 rounded-xl transition-colors">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-xs text-slate-900">
-                          {req.requestCode}
+                        <span className="font-semibold text-xs text-slate-900">
+                          Request #{req.requestCode.replace(/^REQ-/, '')}
                         </span>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -354,7 +354,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     >
                       {item.totalStock} {item.unit}
                     </div>
-                    <div className="text-[10px] text-slate-400 font-medium">ROP: {item.reorderPoint}</div>
+                    <div className="text-[10px] text-slate-400 font-medium">Reorder Level: {item.reorderPoint}</div>
                   </div>
                 </div>
               ))}

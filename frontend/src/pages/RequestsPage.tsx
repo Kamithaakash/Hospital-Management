@@ -188,7 +188,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
             <span>Supply Requests & FEFO Issuance</span>
           </h2>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Submit ward requests (FR-3.1), review approvals (FR-3.3), and issue stock via FEFO (FR-5.3).
+            Submit ward supply requests, review approvals, and dispatch stock.
           </p>
         </div>
 
@@ -259,8 +259,8 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/60 pb-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono font-extrabold text-sm text-slate-900">
-                      {reqItem.requestCode}
+                    <span className="font-bold text-sm text-slate-900">
+                      Request #{reqItem.requestCode.replace(/^REQ-/, '')}
                     </span>
                     {statusBadge(reqItem.status)}
                     {reqItem.urgency === 'URGENT' && (
@@ -447,7 +447,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
           <div className="glass-modal rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-4">
             <div className="flex items-center justify-between border-b border-white/60 pb-3">
               <h3 className="text-base font-bold text-slate-900">
-                New Housekeeping Supply Request (FR-3.1)
+                New Housekeeping Supply Request
               </h3>
               <button onClick={() => setShowNewModal(false)} className="text-slate-400 hover:text-slate-700">
                 <X className="w-5 h-5" />
@@ -575,7 +575,7 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
           <div className="glass-modal rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <h3 className="text-base font-bold text-slate-900">
-              Partial Approval — {partialTarget.requestCode}
+              Partial Approval — Request #{partialTarget.requestCode.replace(/^REQ-/, '')}
             </h3>
             <form
               onSubmit={async (e) => {
@@ -645,12 +645,12 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
           <div className="glass-modal rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <h3 className="text-base font-bold text-slate-900">
-              Reject Request {rejectTarget.requestCode}
+              Reject Request #{rejectTarget.requestCode.replace(/^REQ-/, '')}
             </h3>
             <form onSubmit={handleRejectSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Mandatory Rejection Reason (FR-3.3)
+                  Reason for Rejection *
                 </label>
                 <textarea
                   required
@@ -689,10 +689,10 @@ export const RequestsPage: React.FC<RequestsPageProps> = ({ requests, items, onR
             <div className="flex items-center justify-between border-b border-white/60 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
-                  FEFO Stock Issuance — {issueTarget.requestCode}
+                  Stock Issuance — Request #{issueTarget.requestCode.replace(/^REQ-/, '')}
                 </h3>
                 <p className="text-xs text-slate-500 font-medium">
-                  Earliest-expiring active batches are automatically prioritized (FR-5.3).
+                  Earliest-expiring active batches are automatically prioritized.
                 </p>
               </div>
               <button onClick={() => setIssueTarget(null)} className="text-slate-400 hover:text-slate-700">

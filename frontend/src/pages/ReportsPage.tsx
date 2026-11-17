@@ -20,12 +20,12 @@ export const ReportsPage: React.FC = () => {
   const [rows, setRows] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const reportTabs: Array<{ id: ReportTab; label: string; fr: string }> = [
-    { id: 'stock-availability', label: 'Stock Availability', fr: 'FR-6.1' },
-    { id: 'consumption', label: 'Monthly Consumption', fr: 'FR-6.2' },
-    { id: 'shortages', label: 'Shortages & Alerts', fr: 'FR-6.3' },
-    { id: 'procurement-performance', label: 'Procurement & Delivery', fr: 'FR-6.4' },
-    { id: 'wastage', label: 'Material Wastage', fr: 'FR-6.5' },
+  const reportTabs: Array<{ id: ReportTab; label: string }> = [
+    { id: 'stock-availability', label: 'Stock Availability' },
+    { id: 'consumption', label: 'Monthly Consumption' },
+    { id: 'shortages', label: 'Shortages & Alerts' },
+    { id: 'procurement-performance', label: 'Procurement & Delivery' },
+    { id: 'wastage', label: 'Material Wastage' },
   ];
 
   const loadReport = async () => {
@@ -82,7 +82,7 @@ export const ReportsPage: React.FC = () => {
             <span>Management & Operational Reports</span>
           </h2>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Real-time inventory, consumption, shortages, procurement performance, and wastage (FR-6).
+            Real-time inventory levels, consumption tracking, shortage alerts, and procurement performance.
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export const ReportsPage: React.FC = () => {
                 : 'glass-pill text-slate-700 hover:bg-white'
             }`}
           >
-            {t.label} <span className="opacity-60 ml-1">({t.fr})</span>
+            {t.label}
           </button>
         ))}
       </div>

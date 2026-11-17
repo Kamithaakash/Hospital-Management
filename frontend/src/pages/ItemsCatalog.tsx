@@ -255,7 +255,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                                 Batches ({item.batches?.length || 0})
                               </span>
                               <span className="text-xs text-slate-400 font-medium">
-                                Sorted by FEFO (earliest expiry date first)
+                                Sorted by earliest expiry date first
                               </span>
                             </div>
 
@@ -283,7 +283,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                                     >
                                       {isFirstCandidate && (
                                         <span className="absolute -top-2.5 right-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
-                                          Earliest Expiry (FEFO)
+                                          Earliest Expiry
                                         </span>
                                       )}
                                       <div className="font-bold text-slate-900 flex items-center justify-between">
@@ -339,7 +339,7 @@ export const ItemsCatalog: React.FC<ItemsCatalogProps> = ({ items, onRefresh }) 
                                             onClick={async () => {
                                               const reason = window.prompt(
                                                 `Enter formal disposal/wastage reason for batch ${batch.batchNumber}:`,
-                                                'Expired - Quarantined and disposed per IPC policy'
+                                                'Expired - Quarantined and disposed per hospital infection control policy'
                                               );
                                               if (!reason) return;
                                               try {

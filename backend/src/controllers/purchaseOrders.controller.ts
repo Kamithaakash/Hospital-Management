@@ -171,7 +171,7 @@ export async function verifyDelivery(req: AuthenticatedRequest, res: Response) {
 
         if (condition === 'GOOD' && receivedQty > 0 && poLine.item.tracksExpiry && !line.expiryDate) {
           throw Object.assign(
-            new Error(`Expiry date is required for expiry-tracked item ${poLine.item.name} (FR-5.1).`),
+            new Error(`Expiry date is required for expiry-tracked item "${poLine.item.name}".`),
             { statusCode: 400 }
           );
         }

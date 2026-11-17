@@ -202,7 +202,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
               </div>
             )}
 
-            {/* Quick Stores Actions (FR-1.4) */}
+            {/* Quick Stores Actions */}
             {hasRole(['STORES_STAFF', 'ADMIN']) && (
               <div className="pt-3 border-t border-white/60 space-y-2">
                 <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">

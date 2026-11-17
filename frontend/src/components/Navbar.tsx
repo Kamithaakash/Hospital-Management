@@ -108,7 +108,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Truck className="w-3.5 h-3.5" />
-              <span>POs</span>
+              <span>Purchase Orders</span>
             </button>
 
             <button
@@ -257,7 +257,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             { id: 'dashboard', label: 'Dashboard' },
             { id: 'items', label: 'Inventory' },
             { id: 'requests', label: 'Requests' },
-            { id: 'procurement', label: 'POs' },
+            { id: 'procurement', label: 'Purchase Orders' },
             { id: 'reports', label: 'Reports' },
           ].map((t) => (
             <button
