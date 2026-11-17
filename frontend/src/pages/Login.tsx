@@ -87,7 +87,7 @@ export const Login: React.FC = () => {
 
       {/* Sharp Focused Glassmorphism Card */}
       <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="relative rounded-3xl p-5 sm:p-8 bg-white/35 sm:bg-white/40 backdrop-blur-3xl border border-white/60 shadow-[0_20px_50px_0_rgba(0,0,0,0.35)] ring-1 ring-white/40 overflow-hidden">
+        <div className="relative rounded-3xl p-5 sm:p-8 bg-white/28 sm:bg-white/32 backdrop-blur-3xl border border-white/60 shadow-[0_20px_50px_0_rgba(0,0,0,0.35)] ring-1 ring-white/40 overflow-hidden">
           {/* Glass specular top highlight */}
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent pointer-events-none" />
 
