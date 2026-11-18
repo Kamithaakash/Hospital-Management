@@ -53,16 +53,18 @@ app.use('/api/reports', reportsRoutes);
 // Global Error Handler
 app.use(errorHandler);
 
-// Start server
-const server = app.listen(config.PORT, () => {
-  console.log('================================================================');
-  console.log(`🏥 SHSMS Backend running at: http://localhost:${config.PORT}`);
-  console.log(`🏥 Organization: Hemas Hospital, Thalawathugoda`);
-  console.log(`🏥 Environment: ${config.NODE_ENV}`);
-  console.log('================================================================');
+// Start server (only when not running in serverless environment such as Vercel)
+if (!process.env.VERCEL) {
+  app.listen(config.PORT, () => {
+    console.log('================================================================');
+    console.log(`🏥 SHSMS Backend running at: http://localhost:${config.PORT}`);
+    console.log(`🏥 Organization: Hemas Hospital, Thalawathugoda`);
+    console.log(`🏥 Environment: ${config.NODE_ENV}`);
+    console.log('================================================================');
 
-  // Initialize background cron jobs
-  initExpiryCron();
-});
+    // Initialize background cron jobs
+    initExpiryCron();
+  });
+}
 
 export default app;
