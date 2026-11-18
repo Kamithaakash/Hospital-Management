@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { api } from '../services/api.js';
 import { Item } from '../types/index.js';
 import { useAuth } from '../context/AuthContext.js';
-import { QrCode, X, Search, AlertCircle, Sparkles } from 'lucide-react';
+import { QrCode, X, Search, AlertCircle, Camera, CameraOff, RotateCcw } from 'lucide-react';
 
 interface QRScannerModalProps {
   isOpen: boolean;
@@ -20,56 +20,150 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
   const [manualCode, setManualCode] = useState('');
   const [scannedItem, setScannedItem] = useState<Item | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isStartingCamera, setIsStartingCamera] = useState(false);
   const [actionStatus, setActionStatus] = useState<string | null>(null);
   const [quickQty, setQuickQty] = useState<number>(1);
   const [quickExpiry, setQuickExpiry] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  useEffect(() => {
-    if (!isOpen) {
-      if (scannerRef.current) {
-        scannerRef.current.clear().catch(console.error);
-        scannerRef.current = null;
+  const html5QrRef = useRef<Html5Qrcode | null>(null);
+  const isMountedRef = useRef(true);
+  const lastScannedRef = useRef<string | null>(null);
+
+  const stopCamera = async () => {
+    const instance = html5QrRef.current;
+    if (!instance) {
+      setIsCameraActive(false);
+      return;
+    }
+    try {
+      if (instance.isScanning) {
+        await instance.stop();
       }
-      setScannedItem(null);
-      setError(null);
-      setManualCode('');
+      instance.clear();
+    } catch {
+      // ignore cleanup errors if stream already stopped
+    } finally {
+      html5QrRef.current = null;
+      if (isMountedRef.current) {
+        setIsCameraActive(false);
+        setIsStartingCamera(false);
+      }
+    }
+  };
+
+  const startCamera = async () => {
+    if (isStartingCamera || html5QrRef.current?.isScanning) return;
+
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      setCameraError(
+        'Camera access requires HTTPS (or localhost). On mobile over HTTP, use the manual SKU lookup below.'
+      );
       return;
     }
 
-    const timeout = setTimeout(() => {
-      const container = document.getElementById('qr-reader');
-      if (container && !scannerRef.current) {
-        const scanner = new Html5QrcodeScanner(
-          'qr-reader',
-          {
-            fps: 10,
-            qrbox: { width: 220, height: 220 },
-            aspectRatio: 1.0,
-          },
-          false
-        );
+    const container = document.getElementById('qr-reader');
+    if (!container) return;
 
-        scanner.render(
-          (decodedText) => {
-            handleLookup(decodedText);
-          },
-          () => {
-            // ignore scan frames
-          }
-        );
+    setCameraError(null);
+    setIsStartingCamera(true);
+    lastScannedRef.current = null;
 
-        scannerRef.current = scanner;
+    try {
+      const qr = new Html5Qrcode('qr-reader', {
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+        verbose: false,
+      });
+      html5QrRef.current = qr;
+
+      const config = {
+        fps: 10,
+        qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+          const size = Math.max(160, Math.min(240, Math.floor(minEdge * 0.72)));
+          return { width: size, height: size };
+        },
+        disableFlip: false,
+      };
+
+      const onScanSuccess = async (decodedText: string) => {
+        const cleaned = decodedText.trim();
+        if (!cleaned || lastScannedRef.current === cleaned) return;
+        lastScannedRef.current = cleaned;
+
+        // Pause/stop camera immediately after a valid scan so mobile doesn't re-trigger 10x/sec
+        await stopCamera();
+        if (isMountedRef.current) {
+          setManualCode(cleaned);
+          handleLookup(cleaned);
+        }
+      };
+
+      try {
+        // Prefer rear camera on mobile without forcing unsupported aspectRatio constraints
+        await qr.start({ facingMode: 'environment' }, config, onScanSuccess, () => {});
+      } catch {
+        // Fallback to first available camera (e.g. desktop webcam or front camera)
+        const cameras = await Html5Qrcode.getCameras();
+        if (!cameras || cameras.length === 0) {
+          throw new Error('No camera device found on this device.');
+        }
+        await qr.start(cameras[0].id, config, onScanSuccess, () => {});
       }
-    }, 200);
+
+      if (isMountedRef.current) {
+        // Ensure iOS Safari plays video inline without opening fullscreen player
+        const videoEl = document.querySelector('#qr-reader video') as HTMLVideoElement | null;
+        if (videoEl) {
+          videoEl.setAttribute('playsinline', 'true');
+          videoEl.setAttribute('muted', 'true');
+          videoEl.playsInline = true;
+          videoEl.muted = true;
+        }
+        setIsCameraActive(true);
+      } else {
+        await stopCamera();
+      }
+    } catch (err: any) {
+      await stopCamera();
+      if (isMountedRef.current) {
+        setCameraError(
+          err?.message || 'Unable to access camera. Check browser camera permissions or enter SKU manually.'
+        );
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setIsStartingCamera(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    if (!isOpen) {
+      stopCamera();
+      setScannedItem(null);
+      setError(null);
+      setCameraError(null);
+      setActionStatus(null);
+      setManualCode('');
+      lastScannedRef.current = null;
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (isMountedRef.current && isOpen) {
+        startCamera();
+      }
+    }, 250);
 
     return () => {
-      clearTimeout(timeout);
-      if (scannerRef.current) {
-        scannerRef.current.clear().catch(console.error);
-        scannerRef.current = null;
-      }
+      isMountedRef.current = false;
+      clearTimeout(timer);
+      stopCamera();
     };
   }, [isOpen]);
 
@@ -77,6 +171,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
     if (!code) return;
     setLoading(true);
     setError(null);
+    setActionStatus(null);
     try {
       const res = await api.getItemByQR(code);
       setScannedItem(res.item);
@@ -101,7 +196,10 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
     <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
       <div className="glass-modal rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl relative max-h-[92dvh] overflow-y-auto">
         <button
-          onClick={onClose}
+          onClick={() => {
+            stopCamera();
+            onClose();
+          }}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-700"
         >
           <X className="w-5 h-5" />
@@ -119,10 +217,50 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
           </div>
         </div>
 
-        {/* Camera Scanner Viewport */}
-        <div className="my-4 glass-card rounded-2xl overflow-hidden p-2">
-          <div id="qr-reader" className="w-full"></div>
+        {/* Camera Controls */}
+        <div className="flex items-center justify-between gap-2 mt-3 mb-2">
+          <span className="text-[11px] font-semibold text-slate-600">
+            {isStartingCamera
+              ? 'Starting camera...'
+              : isCameraActive
+              ? 'Camera active — point at QR code'
+              : 'Camera paused'}
+          </span>
+          <div className="flex items-center gap-2">
+            {isCameraActive ? (
+              <button
+                type="button"
+                onClick={stopCamera}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1"
+              >
+                <CameraOff className="w-3.5 h-3.5" />
+                <span>Stop</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={isStartingCamera}
+                onClick={startCamera}
+                className="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold flex items-center gap-1 disabled:opacity-50"
+              >
+                {scannedItem ? <RotateCcw className="w-3.5 h-3.5" /> : <Camera className="w-3.5 h-3.5" />}
+                <span>{scannedItem ? 'Scan Again' : 'Start Camera'}</span>
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Camera Scanner Viewport */}
+        <div className="mb-4 glass-card rounded-2xl overflow-hidden p-2 bg-slate-950/5 min-h-[240px] flex items-center justify-center">
+          <div id="qr-reader" className="w-full" />
+        </div>
+
+        {cameraError && (
+          <div className="p-3 mb-3 rounded-2xl bg-amber-500/15 border border-amber-400/30 text-amber-900 text-xs font-medium flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <span>{cameraError}</span>
+          </div>
+        )}
 
         {/* Manual Fallback Input */}
         <form onSubmit={handleManualSubmit} className="flex gap-2 mb-4">
@@ -179,13 +317,15 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
               <div>Minimum Stock: <strong className="text-slate-800">{scannedItem.minStockLevel} {scannedItem.unit}</strong></div>
             </div>
 
-            {scannedItem.batches && scannedItem.batches.length > 0 && (
+            {scannedItem.batches && scannedItem.batches.filter((b) => b.remainingQty > 0).length > 0 && (
               <div className="pt-2 border-t border-white/60">
                 <span className="text-[11px] font-bold text-slate-700 block mb-1.5">
-                  Active Batches ({scannedItem.batches.length}):
+                  Active Batches ({scannedItem.batches.filter((b) => b.remainingQty > 0).length}):
                 </span>
                 <div className="space-y-1.5 max-h-32 overflow-y-auto">
-                  {scannedItem.batches.map((b) => (
+                  {scannedItem.batches
+                    .filter((b) => b.remainingQty > 0)
+                    .map((b) => (
                     <div
                       key={b.id}
                       className="text-xs p-2 rounded-xl glass-pill flex items-center justify-between"

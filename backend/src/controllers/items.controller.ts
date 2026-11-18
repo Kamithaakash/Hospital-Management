@@ -133,15 +133,18 @@ export async function getItemByQR(req: AuthenticatedRequest, res: Response) {
   try {
     const { code } = req.params;
     const decodedCode = decodeURIComponent(code).trim();
+    const upperCode = decodedCode.toUpperCase();
     const now = new Date();
 
-    // Support both QR payload (SHSMS:ITEM:HEM-CHM-001) and raw SKU (HEM-CHM-001)
+    // Support both QR payload (SHSMS:ITEM:HEM-CHM-001) and raw SKU (HEM-CHM-001), case-insensitively
     const item = await prisma.item.findFirst({
       where: {
         OR: [
           { qrCodeValue: decodedCode },
+          { qrCodeValue: upperCode },
           { sku: decodedCode },
-          { qrCodeValue: `SHSMS:ITEM:${decodedCode}` },
+          { sku: upperCode },
+          { qrCodeValue: `SHSMS:ITEM:${upperCode}` },
         ],
       },
       include: {
