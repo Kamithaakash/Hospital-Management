@@ -46,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Logo & Hospital Brand */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <img
-              src="/images/icon.png"
+              src="/icon.png"
               alt="Hemas Hospital Logo"
               className="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-xl shadow-xs border border-white/80 bg-white/70 p-0.5 shrink-0"
             />
