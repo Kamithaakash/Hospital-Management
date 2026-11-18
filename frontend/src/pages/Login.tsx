@@ -75,7 +75,7 @@ export const Login: React.FC = () => {
       <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md text-center mb-4">
         <div className="flex justify-center mb-2">
           <img
-            src="/images/hemas-logo.png"
+            src="/hemas-logo.png"
             alt="Hemas Hospitals"
             className="h-16 sm:h-24 w-auto object-contain select-none drop-shadow-lg transition-all"
           />
