@@ -4,6 +4,7 @@
   "private": true,
   "description": "Smart Housekeeping Supply Management System (SHSMS) for Hemas Hospital, Thalawathugoda",
   "scripts": {
+    "build": "node scripts/build-root.js",
     "seed": "cd backend && npm run seed",
     "test:auth": "cd backend && npx tsx src/test_auth.ts",
     "backend:dev": "cd backend && npm run dev",
