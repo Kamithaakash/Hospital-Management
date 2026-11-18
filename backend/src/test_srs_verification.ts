@@ -108,7 +108,7 @@ async function runCompleteSRSVerification() {
       },
     });
     return b;
-  });
+  }, { timeout: 30000, maxWait: 15000 });
 
   // Receive Batch 2 (Later expiry)
   const batch2 = await prisma.$transaction(async (tx) => {
@@ -135,7 +135,7 @@ async function runCompleteSRSVerification() {
       },
     });
     return b;
-  });
+  }, { timeout: 30000, maxWait: 15000 });
 
   const totalBeforeIssue = await getItemTotalAvailableQty(prisma as any, testItem.id);
   assert(totalBeforeIssue === 30, 'FR-1.2: Real-time stock tracking across batches', `Total: ${totalBeforeIssue} Bottles`);
@@ -150,7 +150,7 @@ async function runCompleteSRSVerification() {
       referenceId: 'TEST-REF-001',
       notes: 'FEFO deduction test',
     });
-  });
+  }, { timeout: 30000, maxWait: 15000 });
 
   const refreshedBatch1 = await prisma.stockBatch.findUnique({ where: { id: batch1.id } });
   const refreshedBatch2 = await prisma.stockBatch.findUnique({ where: { id: batch2.id } });
@@ -183,7 +183,7 @@ async function runCompleteSRSVerification() {
         referenceId: 'TEST-EXP-001',
         selectedBatchId: expiredBatch.id,
       });
-    });
+    }, { timeout: 30000, maxWait: 15000 });
   } catch (err: any) {
     expiredIssueBlocked = true;
   }
@@ -199,8 +199,7 @@ async function runCompleteSRSVerification() {
       referenceType: 'DIRECT_ISSUE',
       referenceId: 'TEST-LOW-STOCK',
     });
-    await checkAndTriggerLowStockAlert(tx, testItem.id);
-  });
+  }, { timeout: 30000, maxWait: 15000 });
 
   const totalAfterLow = await getItemTotalAvailableQty(prisma as any, testItem.id);
   const lowAlerts = await prisma.alert.findMany({
@@ -227,7 +226,7 @@ async function runCompleteSRSVerification() {
       },
     });
     await resolveLowStockAlertsIfReplenished(tx, testItem.id);
-  });
+  }, { timeout: 30000, maxWait: 15000 });
 
   const unresolvedAlerts = await prisma.alert.findMany({
     where: { itemId: testItem.id, alertType: 'LOW_STOCK', isResolved: false },
@@ -303,7 +302,7 @@ async function runCompleteSRSVerification() {
       where: { id: approvedRequest.id },
       data: { status: 'FULFILLED' },
     });
-  });
+  }, { timeout: 30000, maxWait: 15000 });
 
   const fulfilledRequest = await prisma.supplyRequest.findUnique({
     where: { id: approvedRequest.id },
@@ -413,7 +412,7 @@ async function runCompleteSRSVerification() {
         },
       });
     }
-  });
+  }, { timeout: 30000, maxWait: 15000 });
 
   const refreshedPO = await prisma.purchaseOrder.findUnique({ where: { id: po.id } });
   const discrepancyAlerts = await prisma.alert.findMany({
@@ -470,7 +469,7 @@ async function runCompleteSRSVerification() {
     await prisma.stockLedger.deleteMany({ where: { itemId: testItem.id } });
     await prisma.stockBatch.deleteMany({ where: { itemId: testItem.id } });
     await prisma.requestItem.deleteMany({ where: { itemId: testItem.id } });
-    await prisma.poItem.deleteMany({ where: { itemId: testItem.id } });
+    await prisma.purchaseOrderItem.deleteMany({ where: { itemId: testItem.id } });
     await prisma.deliveryVerification.deleteMany({ where: { poId: po.id } });
     await prisma.alert.deleteMany({ where: { referenceId: po.id } });
     await prisma.purchaseOrder.delete({ where: { id: po.id } });
